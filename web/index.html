@@ -1,0 +1,2073 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#181d26">
+<title>Fantasy SHL Gameweek</title>
+<style>
+/* Färger från Fantasy SHL:s palett (bara färgvärden, inga logotyper eller bilder). */
+:root{--bg:#11161d;--bar:#181d26;--navy:#163047;--card:#1b222d;--card2:#222b38;--line:#2b3544;--fg:#e4e7ea;--muted:#8e99a8;
+  --acc:#67a4ff;--acc2:#4d7fca;--acc-fg:#0d1420;--good:#78faae;--bad:#fe5b5b;--gold:#ffd166;--ice:#eef3f8;--ice2:#dde7f2;--rred:#e25757;--rblue:#4d7fca;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select{font:inherit;color:inherit}
+.appbar{position:sticky;top:0;z-index:20;background:linear-gradient(120deg,var(--bar) 0%,var(--navy) 100%);border-bottom:1px solid #0000004d;box-shadow:0 2px 10px #0006}
+.appbar .top{max-width:980px;margin:0 auto;padding:10px 16px 4px;display:flex;align-items:center;gap:10px}
+.mark{width:30px;height:30px;border-radius:8px;background:var(--acc);color:var(--acc-fg);display:grid;place-items:center;font-weight:800;font-size:.8rem;letter-spacing:-.02em}
+.brand{font-weight:800;letter-spacing:.01em}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:.75rem;letter-spacing:0}
+.gwpill{margin-left:auto;background:#ffffff14;border:1px solid #ffffff22;border-radius:999px;padding:3px 10px;font-size:.8rem;white-space:nowrap}
+.tabs{max-width:980px;margin:0 auto;display:flex;gap:2px;overflow-x:auto;padding:0 10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:10px 10px 9px;font-weight:600;font-size:.9rem;white-space:nowrap;cursor:pointer}
+.tabs button[aria-selected="true"]{color:#fff;border-bottom-color:var(--acc)}
+main{max-width:980px;margin:0 auto;padding:12px 12px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 12px}
+.card h2{font-size:1rem;margin:0 0 8px}
+.sect{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin:14px 2px 6px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:end}
+label{display:flex;flex-direction:column;font-size:.75rem;color:var(--muted);gap:3px}
+input,select{background:#0e131a;border:1px solid var(--line);border-radius:9px;padding:8px 10px;min-width:0}
+button{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer}
+button:hover{border-color:var(--acc2)}
+button.primary{background:var(--acc);color:var(--acc-fg);border-color:var(--acc);font-weight:700}
+button.primary:hover{background:var(--acc2);border-color:var(--acc2);color:#fff}
+button:disabled{opacity:.5;cursor:default}
+.grow{flex:1 1 200px}
+.muted{color:var(--muted)}.small{font-size:.8rem}
+.hidden{display:none!important}
+body:not(.landing) #landing{display:none!important}
+body.landing #setup,body.landing #ctx,body.landing #tabs,body.landing #deadline,body.landing #msg,body.landing .tab,body.landing #gwLabel{display:none!important}
+.hero{text-align:center;padding:26px 8px 18px}
+.hero-title{font-size:2.1rem;font-weight:900;letter-spacing:-.02em;line-height:1.05;color:#fff}
+.hero-title span{display:block;color:var(--acc)}
+.hero p{color:var(--muted);margin:10px auto 0;max-width:420px}
+.landcard{max-width:520px;margin:0 auto;background:linear-gradient(135deg,#67a4ff 0%,#4d7fca 100%);border-radius:18px;padding:22px 20px 16px;color:#181d26;box-shadow:0 10px 30px #0006}
+.landcard>label{display:block;font-size:1.15rem;font-weight:800;color:#181d26;margin:6px 0 8px}
+.lhint{font-size:.8rem;font-weight:600;color:#181d26b3}
+.lrow{display:flex;gap:10px;margin-bottom:8px}
+.lrow input{flex:1;min-width:0;background:#fff;color:#181d26;border:2px solid #fff;border-radius:8px;padding:11px 12px;font-weight:700;font-size:1rem}
+.lrow input::placeholder{color:#8a96a8;font-style:italic;font-weight:700;letter-spacing:.03em}
+.lrow input:focus{outline:none;border-color:#181d26}
+.lbtn{background:#181d26;color:#fff;border:0;border-radius:8px;padding:0 20px;font-weight:900;letter-spacing:.04em;font-size:1rem;min-width:96px;cursor:pointer}
+.lbtn:hover{background:#163047}
+.lmsg{font-size:.85rem;font-weight:600;min-height:1.1em;margin:0 0 10px;color:#181d26}
+.lmsg.err{color:#7a0f0f}
+#lResults .hit{background:#ffffffe6;border-color:#ffffff;color:#181d26}
+#lResults .hit .tx b{color:#181d26}#lResults .hit .tx span{color:#3d4a5c}#lResults .hit .go{color:#163047}
+#lResults .hit mark{background:#ffd166;color:#181d26}
+#lResults .hit .av{background:#181d26;color:#67a4ff}
+.ldemo{display:flex;align-items:center;gap:8px;background:none;border:0;padding:6px 0;margin-top:6px;color:#181d26;font-weight:700;text-decoration:underline;cursor:pointer}
+.ldemo .pill{background:#181d26;color:#fff;border-radius:999px;padding:3px 8px;font-size:.7rem;text-decoration:none;letter-spacing:.05em}
+.lfind{background:none;border:0;padding:0;margin:0 0 12px;color:#181d26;font-weight:700;text-decoration:underline;cursor:pointer;font-size:.9rem}
+.lfindbox{background:#ffffffd9;border-radius:12px;padding:10px 14px;margin:0 0 14px;font-size:.9rem;color:#181d26}
+.lfindbox ol{margin:4px 0 6px 18px;padding:0}.lfindbox li{margin:6px 0}.lfindbox li span{font-size:.8rem;color:#3d4a5c}
+.lfindbox p{margin:4px 0 0;font-size:.8rem;color:#3d4a5c}
+.lbtn-sm{display:inline-block;padding:7px 14px;min-width:0;font-size:.85rem;text-decoration:none;border-radius:8px}
+.lhelp{margin-top:6px;font-size:.85rem;color:#181d26}.lhelp summary{cursor:pointer;font-weight:700}
+.lhelp code{background:#ffffff80;border-radius:4px;padding:0 4px}.lhelp ol{margin:6px 0 4px 18px;padding:0}
+.linkbtn{background:none;border:0;padding:0;color:var(--acc);text-decoration:underline;cursor:pointer;font-size:inherit}
+.welcome{background:#67a4ff14;border:1px solid #67a4ff55;border-radius:12px;padding:12px 14px;margin:0 0 12px}
+.welcome b{color:#fff}.welcome ol{margin:6px 0 6px 18px;padding:0}.welcome li{margin:3px 0}
+.welcome code{background:#0e131a;border-radius:4px;padding:0 4px}
+.linkbtn{background:none;border:0;padding:0;color:var(--acc);text-decoration:underline;cursor:pointer;font-size:inherit}
+#deadline.noteam{display:none!important}
+details.setup>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:700}
+details.setup>summary::-webkit-details-marker{display:none}
+details.setup>summary::after{content:"▾";margin-left:auto;color:var(--muted)}
+details.setup[open]>summary::after{content:"▴"}
+details.setup .inner{margin-top:10px}
+.warn{background:#ffd16614;border:1px solid #ffd16655;color:var(--gold);border-radius:12px;padding:10px 12px;margin:0 0 12px;font-size:.9rem}
+.err{background:#fe5b5b14;border:1px solid #fe5b5b66;color:#ffb3b3;border-radius:12px;padding:10px 12px;margin:0 0 12px}
+.progress{height:4px;background:#ffffff12;border-radius:2px;overflow:hidden;margin-top:8px}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));width:0;transition:width .3s}
+.pos{color:var(--good)}.neg{color:var(--bad)}
+/* Gameweek-huvud */
+.gwhead{background:linear-gradient(160deg,var(--navy),var(--bar));border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 12px}
+.gwhead .team{font-weight:800;font-size:1.05rem;text-align:center}
+.gwhead .sub{text-align:center;color:var(--muted);font-size:.8rem;margin-top:2px}
+.gwstats{display:grid;grid-template-columns:1fr 1.3fr 1fr;align-items:end;margin-top:12px;text-align:center}
+.gwstats .v{font-size:1.35rem;font-weight:800}
+.gwstats .l{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.gwstats .main{background:var(--acc);color:var(--acc-fg);border-radius:14px;padding:8px 4px}
+.gwstats .main .v{font-size:2.4rem;line-height:1}
+.gwstats .main .l{color:#0d1420b3}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:#ffffff12;border:1px solid #ffffff1f;border-radius:999px;padding:2px 9px;font-size:.75rem;white-space:nowrap}
+.chip.card{background:var(--gold);color:#1c1606;border-color:var(--gold);font-weight:700}
+.chip.used{opacity:.6;text-decoration:line-through}
+.seg{display:inline-flex;background:#0e131a;border:1px solid var(--line);border-radius:999px;padding:2px}
+.seg button{border:0;background:none;border-radius:999px;padding:4px 12px;font-size:.8rem;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--acc-fg);font-weight:700}
+/* Isrinken */
+.rink{position:relative;background:radial-gradient(ellipse at 50% 0%,#fff 0%,var(--ice) 55%,var(--ice2) 100%);border-radius:22px 22px 60px 60px;padding:8px 4px 18px;border:3px solid #c9d6e4;overflow:hidden}
+.zone{position:relative;padding:6px 0 4px}
+.zone .zl{position:absolute;left:10px;top:4px;font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6d7f96}
+.redline{height:4px;background:var(--rred);margin:6px 0;opacity:.8}
+.blueline{height:6px;background:var(--rblue);margin:6px 0;opacity:.55}
+.crease{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);width:120px;height:44px;border-radius:60px 60px 0 0;background:#8fb8ff55;border:2px solid var(--rred);border-bottom:0}
+.rrow{display:flex;justify-content:center;gap:4px;margin:6px 0;position:relative;z-index:1}
+.pc{background:none;border:0;padding:0;width:84px;display:flex;flex-direction:column;align-items:center;cursor:pointer;position:relative}
+.pc:hover .nm{background:var(--acc2)}
+.shirt{position:relative;width:46px;height:46px}
+.shirt svg{width:46px;height:46px;display:block;filter:drop-shadow(0 2px 2px #0003)}
+.shirt .club{position:absolute;inset:14px 0 0;text-align:center;font-size:.6rem;font-weight:800;color:#fff;letter-spacing:.02em}
+.shirt.gk .club{color:#1c1606}
+.nm{margin-top:2px;background:var(--bar);color:#fff;font-size:.72rem;font-weight:600;padding:2px 6px;border-radius:5px 5px 0 0;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+.pt{background:var(--acc);color:var(--acc-fg);font-weight:800;font-size:.8rem;width:100%;border-radius:0 0 5px 5px;text-align:center;padding:1px 0}
+.pc.zero .pt{background:#b9c6d6;color:#2a3440}
+.pc.neg .pt{background:var(--bad);color:#fff}
+.bdg{position:absolute;top:-2px;min-width:18px;height:18px;border-radius:9px;font-size:.62rem;font-weight:800;display:grid;place-items:center;padding:0 4px;z-index:2;box-shadow:0 1px 2px #0005}
+.bdg.l{left:12px}.bdg.r{right:10px}
+.bdg.c{background:var(--bar);color:var(--gold);border:1.5px solid var(--gold)}
+.bdg.vc{background:#fff;color:var(--bar);border:1.5px solid var(--bar)}
+.bdg.x2{background:var(--good);color:#06301b}
+.bdg.x0{background:#7d8896;color:#fff}
+.benchbox{background:var(--card2);border:1px solid var(--line);border-radius:14px;margin-top:8px;padding:6px 4px 8px}
+.benchbox .zl{font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:0 8px}
+.benchbox .nm{background:#0e131a}
+.benchbox .pt{background:#3a4555;color:#cfd6df}
+@media (max-width:520px){.pc{width:64px}.shirt,.shirt svg{width:38px;height:38px}.shirt .club{inset:11px 0 0;font-size:.52rem}.nm{font-size:.64rem;padding:2px 3px}.bdg.l{left:4px}.bdg.r{right:2px}}
+/* Listor och tabeller */
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:.68rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.me td{background:#67a4ff1a}
+tr.bench td{opacity:.55}
+tr.grp td{background:#ffffff08;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.lt{display:grid;grid-template-columns:44px 1fr 56px 60px;align-items:center;gap:6px}
+.lt.hd{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:0 8px 6px}
+.sortbtn{background:none;border:0;border-radius:6px;padding:2px 0;font:inherit;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;cursor:pointer;text-decoration:underline dotted #ffffff40;text-underline-offset:3px}
+.sortbtn:hover{color:#fff}
+.sortbtn.on{color:var(--acc);text-decoration:none}
+.activebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding:10px 12px;border-radius:12px;background:#67a4ff14;border:1px solid #67a4ff44}
+.activebar .who{flex:1 1 180px;min-width:0}
+.activebar .who small{display:block;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.activebar .who b{font-size:1rem;color:#fff}
+.search input{width:100%;font-size:1.05rem;padding:12px 14px;border-radius:12px;margin:4px 0 10px}
+.search input:focus{outline:2px solid var(--acc);outline-offset:1px}
+.hit{display:flex;width:100%;align-items:center;gap:12px;text-align:left;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px;cursor:pointer}
+.hit:hover,.hit:focus{border-color:var(--acc);outline:none}
+.hit .av{width:36px;height:36px;border-radius:50%;background:var(--navy);color:var(--acc);display:grid;place-items:center;font-weight:800;flex:none}
+.hit .tx{flex:1;min-width:0}
+.hit .tx b{display:block;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hit .tx span{font-size:.8rem;color:var(--muted)}
+.hit .go{color:var(--acc);font-weight:700;font-size:.85rem;white-space:nowrap}
+.hit mark{background:#67a4ff33;color:#fff;border-radius:3px;padding:0 1px}
+.lrow{border-top:1px solid var(--line)}
+.lrow .lt{padding:9px 8px}
+.lrow.me{background:#67a4ff17;border-left:3px solid var(--acc)}
+.rk{display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.rk b{font-size:.95rem}
+.mv{font-size:.65rem;font-weight:800}
+.mv.up{color:var(--good)}.mv.down{color:var(--bad)}.mv.same{color:var(--muted)}
+.tn{min-width:0}
+.tn .name{background:none;border:0;padding:0;font-weight:700;text-align:left;cursor:pointer;color:#fff;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.tn .meta{font-size:.72rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gwp{font-weight:800;text-align:right;font-size:1rem}
+.tot{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.lexp{padding:4px 8px 12px}
+button.pl{background:none;border:0;padding:0;color:#fff;text-align:left;cursor:pointer;font-weight:600}
+button.pl:hover{color:var(--acc)}
+.minirow{display:flex;justify-content:space-between;gap:8px;padding:8px 2px;border-top:1px solid var(--line);align-items:center}
+.minirow:first-child{border-top:0}
+.minirow .who{min-width:0}
+.minirow .who .meta{font-size:.72rem;color:var(--muted)}
+.minirow .val{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{height:6px;border-radius:3px;background:#ffffff10;margin-top:4px;overflow:hidden}
+.bar>div{height:100%;border-radius:3px}
+.h2h{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center}
+.h2h .v{font-size:2rem;font-weight:800;line-height:1}
+.h2h .vs{color:var(--muted);font-weight:700}
+.h2h .t{font-weight:700;font-size:.9rem;overflow:hidden;text-overflow:ellipsis}
+.h2h .me .v{color:var(--acc)}
+.trf{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;font-size:.85rem}
+.trf .in{color:var(--good)}.trf .out{color:var(--bad)}
+.fx{display:grid;grid-template-columns:1fr 64px 1fr;align-items:center;gap:6px;padding:8px 2px;border-top:1px solid var(--line)}
+.fx .h{text-align:right;font-weight:700}.fx .a{font-weight:700}
+.fx .tm{text-align:center;background:#0e131a;border:1px solid var(--line);border-radius:7px;font-size:.8rem;padding:2px 0}
+.fx .mine{grid-column:1/-1;font-size:.75rem;color:var(--muted);text-align:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}}
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--fg);max-width:min(520px,94vw);padding:16px}
+dialog::backdrop{background:#000a}
+.sharedlg{width:min(420px,94vw)}
+.qrbox{background:#fff;border-radius:14px;padding:10px;margin:0 auto 10px;max-width:300px}
+.qrbox svg{display:block;width:100%;height:auto}
+.shareurl{width:100%;font-size:.8rem;color:var(--muted)}
+.foot{font-size:.75rem;color:var(--muted);text-align:center;margin-top:18px}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SHL Gameweek">
+<script>window.FSL_PUBLIC_URL="https://bapskalle.github.io/fantasy-shl/";</script>
+<script>window.FSL_FIXED_LEAGUE={"id": "14303", "name": "Verken-Ligan"};</script>
+</head>
+<body>
+<header class="appbar">
+  <div class="top">
+    <div class="mark">FS</div>
+    <div class="brand">Fantasy SHL Gameweek<small id="leagueLabel">Kompisligan</small></div>
+    <div class="gwpill" id="gwLabel">Omgång –</div>
+  </div>
+  <nav class="tabs hidden" id="tabs" role="tablist">
+    <button data-tab="mine" aria-selected="true">Mitt lag</button>
+    <button data-tab="league" aria-selected="false">Ligan</button>
+    <button data-tab="rival" aria-selected="false">Rival</button>
+    <button data-tab="transfers" aria-selected="false">Byten</button>
+    <button data-tab="upcoming" aria-selected="false">Kommande</button>
+  </nav>
+</header>
+<main>
+<div id="demoBanner" class="warn hidden">Demoläge: påhittade lag och spelare, inga anrop mot fantasy.shl.se.</div>
+
+<section id="landing" class="landing" aria-label="Startsida">
+  <div class="hero">
+    <div class="hero-title">Fantasy SHL <span>Gameweek</span></div>
+    <p>Poäng, rivaler, coachkort och byten för din liga – även live under omgången.</p>
+  </div>
+  <div class="landcard">
+    <label for="lId">Ditt lag-ID</label>
+    <div class="lrow"><input id="lId" placeholder="LAG-ID ELLER LÄNK" autocomplete="off" spellcheck="false" enterkeyhint="go"><button id="lGo" class="lbtn" type="button">KÖR</button></div>
+    <div id="lIdMsg" class="lmsg"></div>
+    <button id="lFindId" class="lfind" type="button">Vet du inte ditt lag-ID? Hitta det på 30 sekunder ›</button>
+    <div id="lFindBox" class="lfindbox hidden">
+      <ol>
+        <li>Se till att du är <b>inloggad</b> på fantasy.shl.se i den här webbläsaren.</li>
+        <li><a id="lProfile" href="https://fantasy.shl.se/api/v1/user-profile" target="_blank" rel="noopener noreferrer" class="lbtn lbtn-sm">Öppna min profil ↗</a><br><span>En sida med text öppnas i en ny flik.</span></li>
+        <li>Tryck <b>Ctrl+A</b> och sedan <b>Ctrl+C</b> (Mac: <b>⌘A</b>, <b>⌘C</b>) på den sidan.</li>
+        <li>Kom tillbaka hit, klistra in i <b>Ditt lag-ID</b> och tryck <b>KÖR</b>.</li>
+      </ol>
+      <p>Appen plockar bara ut ditt lag-ID. Allt annat på sidan (t.ex. e-post) kastas direkt och sparas aldrig.</p>
+    </div>
+    <label for="lName">Eller ditt namn eller lagnamn <span id="lNameHint" class="lhint"></span></label>
+    <div class="lrow"><input id="lName" type="search" placeholder="FÖR- OCH EFTERNAMN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button id="lSearch" class="lbtn" type="button">SÖK</button></div>
+    <div id="lResults"></div>
+    <button id="lDemo" class="ldemo" type="button"><span class="pill">DEMO</span> Testa med en påhittad liga</button>
+  </div>
+</section>
+
+<details class="card setup" id="setup">
+  <summary>Inställningar</summary>
+  <div class="inner">
+    <form id="cfg" class="row" autocomplete="off">
+      <label id="leagueIdLabel">Liga-ID (valfritt)<input id="league" inputmode="numeric" size="8" placeholder="väljs i listan"></label>
+      <label class="grow">user_code (en ligamedlems)<input id="uc" size="14" spellcheck="false" placeholder="t.ex. AbCdEfGh"></label>
+      <button class="primary" id="go" type="submit">Hämta</button>
+      <button id="reload" type="button" title="Hämta om allt för vald omgång">Uppdatera</button>
+      <button id="demoBtn" type="button">Demo</button>
+    </form>
+    <div class="row" style="margin-top:8px">
+      <label class="grow">Klistra in delningslänk<input id="paste" spellcheck="false" placeholder="Klistra in länken här: ...?league=...&uc=..."></label>
+      <button id="pasteBtn" type="button">Öppna länk</button>
+      <button id="copyBtn" type="button">Kopiera länk</button>
+    </div>
+    <div class="row" style="margin-top:8px"><label class="grow">Webbadress där appen ligger (för länkar och QR-koder)<input id="publicUrl" spellcheck="false" placeholder="t.ex. https://dittnamn.github.io/fantasy-shl/"></label></div>
+    <div class="small muted" style="margin-top:8px">Sparat på den här datorn: <span id="savedInfo">inget</span> · <button type="button" id="forgetBtn" class="linkbtn">Glöm mig</button></div>
+    <div id="copyOut" class="small muted hidden" style="margin-top:6px;word-break:break-all"></div>
+  </div>
+</details>
+
+<section class="card hidden" id="ctx">
+  <div class="row">
+    <label class="grow">Liga<select id="leagueSel"></select></label>
+    <label>Omgång<select id="round"></select></label>
+    <button id="shareBtn" type="button" class="primary hidden" title="Visa QR-kod och länk till ligan">📱 Dela / QR</button>
+    <button id="liveBtn" type="button" class="hidden" title="Hämtar om ligatabell och alla lag. Högst en gång per minut.">Uppdatera live</button>
+  </div>
+  <div id="activeBar" class="activebar hidden"></div>
+  <div id="who" class="small muted" style="margin-top:8px"></div>
+  <div id="status" class="small muted" style="margin-top:2px"></div>
+  <div class="progress"><div id="bar"></div></div>
+</section>
+
+<div id="deadline" class="warn hidden"></div>
+<div id="msg"></div>
+
+<section id="tab-mine" class="tab"></section>
+<section id="tab-league" class="tab hidden"></section>
+<section id="tab-rival" class="tab hidden"></section>
+<section id="tab-impact" class="tab hidden"></section>
+<section id="tab-transfers" class="tab hidden"></section>
+<section id="tab-upcoming" class="tab hidden"></section>
+
+<section id="selftest" class="card hidden"></section>
+
+<p class="foot">Privat verktyg för kompisligan, inte kopplat till SHL. Läser bara data (GET) från fantasy.shl.se, högst ett anrop per sekund. Inga inloggningar eller cookies. E-postadresser tas bort direkt och visas aldrig.</p>
+</main>
+
+<dialog id="shareDlg" class="sharedlg">
+  <h2 style="margin:0 0 4px">Dela <span id="shareTitle">ligan</span></h2>
+  <div class="seg" role="group" aria-label="Vad ska delas" style="margin:6px 0 10px"><button data-sharemode="league" aria-pressed="true">Ligan</button><button data-sharemode="mine" aria-pressed="false">Mitt lag</button></div>
+  <p id="shareHint" class="small muted" style="margin:0 0 10px"></p>
+  <div id="shareQr" class="qrbox"></div>
+  <div id="shareWarn" class="warn small hidden"></div>
+  <input id="shareUrl" readonly class="shareurl" aria-label="Länk">
+  <div class="row" style="justify-content:space-between;margin-top:10px"><button id="shareCopy" class="primary" type="button">Kopiera länk</button><form method="dialog"><button>Stäng</button></form></div>
+  <p class="small muted" style="margin:10px 0 0">Länken innehåller ligans kod (bara läsåtkomst). Dela den bara med ligan.</p>
+</dialog>
+<dialog id="owners"><div id="ownersBody"></div><form method="dialog" style="text-align:right;margin-top:10px"><button>Stäng</button></form></dialog>
+
+<script id="fsl-logic">
+/* Ren logik utan DOM. Testas av selftest (i webbläsaren med ?selftest=1 och i node via selftest.cjs). */
+(function (root) {
+  'use strict';
+
+  var SENSITIVE_KEY = /(e[-_]?mail|^mail$|phone|password|passwd|token|birth|address|secret)/i;
+  var EMAIL_VALUE = /[^\s@"'<>]+@[^\s@"'<>]+\.[a-z]{2,}/i;
+
+  function stripSensitive(v) {
+    if (Array.isArray(v)) return v.map(stripSensitive);
+    if (v && typeof v === 'object') {
+      var o = {};
+      Object.keys(v).forEach(function (k) { if (!SENSITIVE_KEY.test(k)) o[k] = stripSensitive(v[k]); });
+      return o;
+    }
+    if (typeof v === 'string' && EMAIL_VALUE.test(v)) return '';
+    return v;
+  }
+
+  var CARDS = {
+    FREE_EXCHANGE: 'Fria byten', TOP_TEAM: 'Toppa laget', ATTACK: 'Anfall',
+    DEFENSE: 'Försvar', JUNIORS: 'Juniorer', VETERANS: 'Veteraner'
+  };
+
+  function normCard(s) {
+    if (!s) return null;
+    var u = String(s).toUpperCase();
+    if (u.indexOf('TOP') >= 0) return 'TOP_TEAM';
+    if (u.indexOf('ATTACK') >= 0 || u.indexOf('OFFENS') >= 0) return 'ATTACK';
+    if (u.indexOf('DEF') >= 0) return 'DEFENSE';
+    if (u.indexOf('JUNIOR') >= 0 || u.indexOf('YOUTH') >= 0) return 'JUNIORS';
+    if (u.indexOf('VETERAN') >= 0) return 'VETERANS';
+    if (u.indexOf('FREE') >= 0 || u.indexOf('EXCHANGE') >= 0) return 'FREE_EXCHANGE';
+    return u;
+  }
+  function truthy(x) { return x === true || x === 1 || x === '1' || x === 'true'; }
+  function falsy(x) { return x === false || x === 0 || x === '0' || x === 'false'; }
+
+  function activeCard(powerups) {
+    var list = Array.isArray(powerups) ? powerups : [];
+    for (var i = 0; i < list.length; i++) {
+      var x = list[i];
+      if (x && truthy(x.is_active)) {
+        var code = normCard(x.short_name);
+        return { code: code, name: CARDS[code] || x.name || x.short_name };
+      }
+    }
+    return null;
+  }
+  function usedCards(powerups) {
+    var list = Array.isArray(powerups) ? powerups : [];
+    return list.filter(function (x) { return x && falsy(x.is_available) && !truthy(x.is_active); })
+      .map(function (x) { var c = normCard(x.short_name); return CARDS[c] || x.name || c; });
+  }
+
+  var GROUPS = [['line-up1', 'L1'], ['line-up2', 'L2']];
+  function isPlayer(p) { return p && typeof p === 'object' && p.player_id != null; }
+
+  // team_lineup -> platt lista. line-up1/2 innehåller även nyckeln total_points (ett tal) som hoppas över.
+  function flattenLineup(tl) {
+    var out = [];
+    if (!tl || typeof tl !== 'object') return out;
+    GROUPS.forEach(function (g) {
+      var grp = tl[g[0]];
+      if (grp && typeof grp === 'object') Object.keys(grp).forEach(function (slot) {
+        if (isPlayer(grp[slot])) out.push(Object.assign({}, grp[slot], { group: g[1], slot: slot }));
+      });
+    });
+    if (isPlayer(tl.GK)) out.push(Object.assign({}, tl.GK, { group: 'GK', slot: 'GK' }));
+    if (tl.bench && typeof tl.bench === 'object') Object.keys(tl.bench).forEach(function (slot) {
+      if (isPlayer(tl.bench[slot])) out.push(Object.assign({}, tl.bench[slot], { group: 'BENCH', slot: slot }));
+    });
+    return out;
+  }
+
+  function posClass(p) {
+    var s = String(p.position || p.slot || '').toUpperCase();
+    if (s === 'GK' || s === 'G' || s === 'MV') return 'G';
+    if (s === 'LD' || s === 'RD' || s === 'D' || s === 'B' || s === 'DEF') return 'D';
+    return 'F';
+  }
+
+  function ageAt(dob, ref) {
+    if (!dob) return null;
+    var d = new Date(String(dob).slice(0, 10) + 'T00:00:00Z');
+    var r = ref ? new Date(String(ref).slice(0, 10) + 'T00:00:00Z') : new Date();
+    if (isNaN(d) || isNaN(r)) return null;
+    var a = r.getUTCFullYear() - d.getUTCFullYear();
+    var m = r.getUTCMonth() - d.getUTCMonth();
+    if (m < 0 || (m === 0 && r.getUTCDate() < d.getUTCDate())) a--;
+    return a;
+  }
+
+  function cardQualifies(card, p, ref) {
+    if (card === 'ATTACK') return posClass(p) === 'F';
+    if (card === 'DEFENSE') return posClass(p) === 'D';
+    var age = ageAt(p.dob, ref);
+    if (card === 'JUNIORS') return age != null && age <= 20;
+    if (card === 'VETERANS') return age != null && age >= 33;
+    return false;
+  }
+
+  // Egen beräkning, används bara när API:ts multiplier saknas.
+  function computeMultiplier(p, card, ref) {
+    if (p.group === 'BENCH') return 0;
+    if (card === 'TOP_TEAM') return (p.group === 'L1' || p.group === 'GK') ? 2 : 0;
+    var cap = p.role === 'C';
+    var q = !!card && cardQualifies(card, p, ref);
+    return (cap || q) ? 2 : 1; // kapten och kort staplas inte
+  }
+
+  function effectiveMultiplier(p, card, ref) {
+    if (p.group === 'BENCH' || truthy(p.benched)) return 0; // bänken räknas aldrig
+    if (p.multiplier !== null && p.multiplier !== undefined && p.multiplier !== '') {
+      var m = Number(p.multiplier);
+      if (isFinite(m)) return m;
+    }
+    return computeMultiplier(p, card, ref);
+  }
+
+  // API:ts points är redan multiplicerad (verifierat). Grundpoäng = points / multiplier.
+  function basePoints(p, mult) {
+    var pts = Number(p.points);
+    if (!isFinite(pts) || p.points === null || p.points === undefined) return null;
+    if (mult > 0) return pts / mult;
+    return null;
+  }
+
+  function prepareTeam(players, card, ref) {
+    var sum = 0;
+    var list = players.map(function (p) {
+      var eff = effectiveMultiplier(p, card, ref);
+      var q = Object.assign({}, p, { eff: eff, base: basePoints(p, eff), age: ageAt(p.dob, ref) });
+      if (eff > 0 && isFinite(Number(p.points))) sum += Number(p.points);
+      return q;
+    });
+    return { players: list, sum: sum };
+  }
+
+  function transfersDiff(prev, cur) {
+    var pIds = {}, cIds = {};
+    (prev || []).forEach(function (p) { pIds[p.player_id] = p; });
+    (cur || []).forEach(function (p) { cIds[p.player_id] = p; });
+    if (!prev || prev.length === 0) return { newCoach: true, in: [], out: [], partial: false };
+    return {
+      newCoach: false,
+      in: (cur || []).filter(function (p) { return !pIds[p.player_id]; }),
+      out: prev.filter(function (p) { return !cIds[p.player_id]; }),
+      partial: prev.length < 15 || (cur || []).length < 15
+    };
+  }
+
+  // Egna (kompis)ligor ur /leagues. Officiella ligor (yearly, monthly, weekly, fan_club) har tiotusentals lag och utesluts.
+  function customLeagues(list) {
+    return (Array.isArray(list) ? list : []).filter(function (l) {
+      if (!l || l.id == null) return false;
+      var t = l.type || {};
+      if (t.is_official === true || t.is_official === 1) return false;
+      if (t.is_official === false || t.is_official === 0) return true;
+      return Number(l.type_id) === 5;
+    }).map(function (l) { return { id: String(l.id), name: String(l.name || ('Liga ' + l.id)) }; })
+      .sort(function (a, b) { return a.name.localeCompare(b.name, 'sv'); });
+  }
+  var MAX_LEAGUE_TEAMS = 120;
+
+  // För sökning: gemener, utan diakritiska tecken (å→a, ö→o, é→e), ett mellanslag mellan orden.
+  function fold(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+  // Sök lag på coachens för- och efternamn (eller lagnamnet). Alla sökord måste finnas, i valfri ordning.
+  function searchTeams(teams, query) {
+    var q = fold(query);
+    if (q.length < 2) return [];
+    var words = q.split(' ');
+    return (teams || []).map(function (t) {
+      var person = fold((t.first_name || '') + ' ' + (t.last_name || ''));
+      var team = fold(t.team_name);
+      var hay = person + ' ' + team;
+      if (!words.every(function (w) { return hay.indexOf(w) >= 0; })) return null;
+      var score = person === q ? 100 : 0;
+      words.forEach(function (w) {
+        if ((' ' + person).indexOf(' ' + w) >= 0) score += 10; // ett namn börjar med sökordet
+        if ((' ' + team).indexOf(' ' + w) >= 0) score += 4;
+      });
+      return { t: t, score: score };
+    }).filter(Boolean).sort(function (a, b) { return (b.score - a.score) || ((a.t.rank || 999) - (b.t.rank || 999)); })
+      .map(function (x) { return x.t; });
+  }
+
+  function normName(s) { return String(s || '').trim().replace(/\s+/g, ' ').toLowerCase(); }
+  // Prioritet: lagnamn (lag=) > lagkod (team=, äldre länkar) > lagets kod som användes för hämtningen.
+  function pickMyTeam(teams, opts) {
+    opts = opts || {};
+    var has = function (code) { return !!code && teams.some(function (t) { return t.user_code === code; }); };
+    if (opts.lag) {
+      var hit = teams.filter(function (t) { return t.team_name === opts.lag; })[0] ||
+                teams.filter(function (t) { return normName(t.team_name) === normName(opts.lag); })[0];
+      if (hit) return hit.user_code;
+    }
+    if (has(opts.team)) return opts.team;
+    if (has(opts.uc)) return opts.uc;
+    return null;
+  }
+
+  // entries: [{uc, name, players:[{player_id, eff, group, role, ...}]}]
+  function ownership(entries) {
+    var map = {};
+    entries.forEach(function (e) {
+      (e.players || []).forEach(function (p) {
+        (map[p.player_id] = map[p.player_id] || []).push({ uc: e.uc, name: e.name, group: p.group, role: p.role, eff: p.eff });
+      });
+    });
+    return map;
+  }
+
+  function playerInfo(entries) {
+    var info = {};
+    entries.forEach(function (e) {
+      (e.players || []).forEach(function (p) {
+        var i = info[p.player_id] || (info[p.player_id] = { player_id: p.player_id, name: p.name, club_id: p.club_id, position: p.position, age: p.age, base: null });
+        if (i.base == null && p.base != null) i.base = p.base;
+      });
+    });
+    return info;
+  }
+
+  // Importance: min multiplikator minus snittet hos övriga lag (0 för lag som inte äger spelaren).
+  function impact(myUc, entries) {
+    var me = entries.filter(function (e) { return e.uc === myUc; })[0];
+    var others = entries.filter(function (e) { return e.uc !== myUc; });
+    if (!me) return [];
+    var info = playerInfo(entries);
+    var own = ownership(entries);
+    var n = Math.max(others.length, 1);
+    return Object.keys(info).map(function (pid) {
+      var mine = (me.players || []).filter(function (p) { return String(p.player_id) === pid; })[0];
+      var myMult = mine ? mine.eff : 0;
+      var sumO = 0, cnt = 0;
+      others.forEach(function (e) {
+        var p = (e.players || []).filter(function (x) { return String(x.player_id) === pid; })[0];
+        if (p) { sumO += p.eff; cnt++; }
+      });
+      var avg = sumO / n;
+      var i = info[pid];
+      return {
+        player_id: i.player_id, name: i.name, club_id: i.club_id, position: i.position,
+        owned: !!mine, myGroup: mine ? mine.group : null, myMult: myMult, avgOthers: avg,
+        ownersOthers: cnt, ownersTotal: (own[pid] || []).length,
+        importance: myMult - avg, base: i.base,
+        net: i.base == null ? null : (myMult - avg) * i.base
+      };
+    });
+  }
+
+  function rivalCompare(me, rival) {
+    var info = playerInfo([me, rival]);
+    var find = function (e, pid) { return (e.players || []).filter(function (p) { return String(p.player_id) === pid; })[0]; };
+    return Object.keys(info).map(function (pid) {
+      var a = find(me, pid), b = find(rival, pid);
+      var ma = a ? a.eff : 0, mb = b ? b.eff : 0, base = info[pid].base;
+      return { player_id: info[pid].player_id, name: info[pid].name, club_id: info[pid].club_id, position: info[pid].position,
+        myMult: ma, rivalMult: mb, base: base, net: base == null ? null : (ma - mb) * base };
+    }).filter(function (r) { return r.myMult !== r.rivalMult; })
+      .sort(function (x, y) { return (y.net == null ? -1e9 : Math.abs(y.net)) - (x.net == null ? -1e9 : Math.abs(x.net)); });
+  }
+
+  var CODE_RE = /^[A-Za-z0-9_-]{3,64}$/;
+  // Tolkar det användaren klistrar in: ett lag-ID, en ligalänk från appen, eller en adress från fantasy.shl.se.
+  function parseAnyInput(text) {
+    var s = String(text || '').trim();
+    if (!s) return {};
+    var out = {};
+    if (/[?&](league|uc|lag|team)=/.test(s)) {
+      var sp = parseShare(s);
+      ['league', 'uc', 'lag', 'team'].forEach(function (k) { if (sp[k]) out[k] = sp[k]; });
+      out.share = !!sp.uc;
+    }
+    var m = /[?&]user_code=([A-Za-z0-9_-]{3,64})/.exec(s);
+    if (m) out.uc = m[1];
+    // Hela profilsidan (fantasy.shl.se/api/v1/user-profile) inklistrad: bara user_code används, resten kastas.
+    var j = /"user_code"\s*:\s*"([A-Za-z0-9_-]{3,64})"/.exec(s);
+    if (j) { out = { uc: j[1], profile: true }; return out; }
+    var l = /\/leagues\/(\d{1,9})/.exec(s);
+    if (l && !out.league) out.league = l[1];
+    if (!out.uc && !out.league && CODE_RE.test(s)) out.uc = s;
+    return out;
+  }
+  function parseShare(text) {
+    var s = String(text || '').trim();
+    var q = s.indexOf('?') >= 0 ? s.slice(s.indexOf('?') + 1) : s;
+    q = q.split('#')[0];
+    var out = {};
+    q.split('&').forEach(function (kv) {
+      var i = kv.indexOf('=');
+      if (i < 0) return;
+      var k = decodeURIComponent(kv.slice(0, i)), v = decodeURIComponent(kv.slice(i + 1).replace(/\+/g, ' ')).trim();
+      if (k === 'league' && /^\d{1,9}$/.test(v)) out.league = v;
+      if ((k === 'uc' || k === 'team') && CODE_RE.test(v)) out[k] = v;
+      if (k === 'round' && /^\d{1,3}$/.test(v)) out.round = v;
+      if (k === 'lag' && v.length >= 1 && v.length <= 80 && !/[\u0000-\u001f<>]/.test(v)) out.lag = v;
+    });
+    return out;
+  }
+  function buildShareQuery(p) {
+    var parts = [];
+    ['league', 'uc', 'lag'].forEach(function (k) { if (p[k]) parts.push(k + '=' + encodeURIComponent(p[k])); });
+    return '?' + parts.join('&');
+  }
+
+  /* ---------- Demo-API (samma svarsformer som fantasy.shl.se, inkl. e-post som måste strippas) ---------- */
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+  function makeDemo(nowMs) {
+    var rnd = mulberry32(14303);
+    var DAY = 864e5;
+    var clubs = ['DIF', 'FBK', 'FHC', 'HV71', 'IFB', 'LHC', 'LHF', 'MIF', 'OHK', 'RBK', 'SAIK', 'TIK', 'VLH', 'BIF'];
+    var fn = ['Axel', 'Bo', 'Carl', 'David', 'Erik', 'Filip', 'Gustav', 'Hugo', 'Isak', 'Johan', 'Karl', 'Linus', 'Max', 'Nils', 'Oskar', 'Pontus', 'Rasmus', 'Simon', 'Tore', 'Viktor'];
+    var ln = ['Ekblad', 'Bergvik', 'Lindmark', 'Holmqvist', 'Strandby', 'Sjövall', 'Dahlgård', 'Strömlind', 'Nordvik', 'Viklund', 'Åsberg', 'Hedqvist', 'Forsmark', 'Lundahl'];
+    var skPos = ['LW', 'CE', 'RW', 'LD', 'RD'];
+    var pool = [];
+    for (var i = 0; i < 96; i++) {
+      var position = i < 16 ? 'GK' : skPos[i % 5];
+      var age = i % 7 === 0 ? 19 + (i % 2) : i % 6 === 0 ? 33 + (i % 4) : 22 + Math.floor(rnd() * 10);
+      pool.push({ player_id: 5000 + i, name: fn[i % fn.length] + ' ' + ln[(i * 5 + 3) % ln.length], first_name: fn[i % fn.length], family_name: ln[(i * 5 + 3) % ln.length],
+        position: position, club_id: clubs[i % clubs.length], dob: (2026 - age) + '-03-15', value: 4000000 + Math.floor(rnd() * 60) * 100000,
+        owned_by_percent: (rnd() * 60).toFixed(2), status: 'active', avatar: 'https://example.invalid/p.png' });
+    }
+    var cls = function (p) { return p.position === 'GK' ? 'G' : (p.position === 'LD' || p.position === 'RD') ? 'D' : 'F'; };
+    var base = {};
+    [1, 2].forEach(function (r) { base[r] = {}; pool.forEach(function (p) { base[r][p.player_id] = Math.floor(rnd() * 14) - 2; }); });
+
+    function buildSquad(prefer) {
+      var used = {};
+      var take = function (c, filter) {
+        var cands = pool.filter(function (p) { return !used[p.player_id] && cls(p) === c && (!filter || filter(p)); });
+        if (!cands.length) cands = pool.filter(function (p) { return !used[p.player_id] && cls(p) === c; });
+        var p = cands[Math.floor(rnd() * cands.length)]; used[p.player_id] = 1; return p;
+      };
+      var s = { L1: {}, L2: {}, GK: null, bench: {} };
+      ['L1', 'L2'].forEach(function (g) {
+        s[g].LW = take('F', prefer); s[g].CE = take('F', prefer); s[g].RW = take('F', prefer);
+        s[g].LD = take('D', prefer); s[g].RD = take('D', prefer);
+      });
+      s.GK = take('G'); s.bench.GK = take('G'); s.bench.D = take('D'); s.bench.CE = take('F'); s.bench.W = take('F');
+      return s;
+    }
+    var juniorish = function (p) { return ageAt(p.dob, '2026-09-21') <= 20 || rnd() < 0.4; };
+    var vetish = function (p) { return ageAt(p.dob, '2026-09-21') >= 33 || rnd() < 0.4; };
+
+    var coachCards = ['', 'TOP_TEAM', 'JUNIORS', 'VETERANS', '', '', 'ATTACK', ''];
+    var teamNames = ['Demolag Alfa', 'Demolag Bravo', 'Demolag Charlie', 'Demolag Delta', 'Demolag Echo', 'Demolag Foxtrot', 'Demolag Golf', 'Demolag Hotel'];
+    var coaches = teamNames.map(function (n, k) {
+      var pref = coachCards[k] === 'JUNIORS' ? juniorish : coachCards[k] === 'VETERANS' ? vetish : null;
+      return { name: n, uc: 'DEMO' + String.fromCharCode(65 + k) + '1', card2: coachCards[k], s2: buildSquad(pref) };
+    });
+    function clone(s) { return JSON.parse(JSON.stringify(s)); }
+    function outsider(s, c, from) {
+      var ids = {};
+      ['L1', 'L2'].forEach(function (g) { Object.keys(s[g]).forEach(function (k) { ids[s[g][k].player_id] = 1; }); });
+      ids[s.GK.player_id] = 1; Object.keys(s.bench).forEach(function (k) { ids[s.bench[k].player_id] = 1; });
+      for (var i = 0; i < pool.length; i++) { var p = pool[(from + i) % pool.length]; if (!ids[p.player_id] && cls(p) === c) return p; }
+    }
+    coaches.forEach(function (c, k) {
+      var s1 = clone(c.s2);
+      if (k === 0) { var t = s1.L2.LW; s1.L2.LW = s1.bench.W; s1.bench.W = t; }          // bänk <-> kedja, inget byte
+      else if (k === 1) { s1.L1.CE = outsider(c.s2, 'F', 60); s1.L2.RD = outsider(c.s2, 'D', 70); } // två byten (-10)
+      else if (k === 5) { s1 = null; }                                                    // ny coach
+      else { s1.L2.RW = outsider(c.s2, 'F', 20 + 7 * k); }                               // ett byte
+      c.s1 = s1;
+      c.cardsUsedBefore = k === 3 ? ['ATTACK'] : [];
+    });
+
+    function lineupFor(c, r) {
+      var s = r === 1 ? c.s1 : c.s2;
+      if (!s) return null;
+      var card = r === 2 ? c.card2 : '';
+      var ref = r === 1 ? '2026-09-19' : '2026-09-21';
+      var slots = ['LW', 'CE', 'RW', 'LD', 'RD'];
+      var capSlot = slots[(c.uc.charCodeAt(4) + r) % 5], vcSlot = slots[(c.uc.charCodeAt(4) + r + 2) % 5];
+      var mk = function (p, group, role, slot) {
+        var q = Object.assign({}, p, { id: p.player_id * 10 + r, role: role, lineup: group === 'L2' ? 2 : 1, benched: group === 'BENCH' ? 1 : 0, games: 2,
+          club_logo: 'https://example.invalid/logo.svg' });
+        q.group = group;
+        var m = computeMultiplier(q, card, ref);
+        q.multiplier = group === 'BENCH' ? (card === 'TOP_TEAM' ? 2 : 1) : m;
+        q.points = group === 'BENCH' ? base[r][p.player_id] : base[r][p.player_id] * m;
+        delete q.group;
+        if (c.uc === 'DEMOE1') delete q.multiplier; // testar reservberäkningen
+        return q;
+      };
+      var tl = { 'line-up1': {}, 'line-up2': {}, GK: null, bench: {} };
+      ['L1', 'L2'].forEach(function (g, gi) {
+        var key = gi ? 'line-up2' : 'line-up1', tot = 0;
+        slots.forEach(function (sl) {
+          var role = (card !== 'TOP_TEAM' && g === 'L1' && sl === capSlot) ? 'C' : (card !== 'TOP_TEAM' && g === 'L1' && sl === vcSlot) ? 'VC' : null;
+          tl[key][sl] = mk(s[g][sl], g, role, sl); tot += tl[key][sl].points;
+        });
+        tl[key].total_points = tot;
+      });
+      tl.GK = mk(s.GK, 'GK', null, 'GK');
+      Object.keys(s.bench).forEach(function (sl) { tl.bench[sl] = mk(s.bench[sl], 'BENCH', null, sl); });
+      return tl;
+    }
+    function pointsFor(c, r) {
+      var tl = lineupFor(c, r); if (!tl) return 0;
+      var sum = flattenLineup(tl).filter(function (p) { return p.group !== 'BENCH'; }).reduce(function (a, p) { return a + p.points; }, 0);
+      if (r === 2 && c.s1) {
+        var d = transfersDiff(flattenLineup(lineupFor(c, 1)), flattenLineup(tl));
+        sum -= 10 * Math.max(0, d.in.length - 1);
+      }
+      return sum;
+    }
+
+    var lock3 = new Date(nowMs + 2 * DAY + 3 * 3600e3).toISOString();
+    var rounds = [
+      { id: 1, game_round_number: 1, start_date: '2026-09-19', end_date: '2026-09-20', lock_time: '2026-09-19T12:15:00.000000Z', locked: 1, lineups_locked: 1, points_processed: 1 },
+      { id: 2, game_round_number: 2, start_date: '2026-09-21', end_date: '2026-09-27', lock_time: '2026-09-22T16:00:00.000000Z', locked: 1, lineups_locked: 1, points_processed: 0 },
+      { id: 3, game_round_number: 3, start_date: '2026-09-28', end_date: '2026-10-04', lock_time: lock3, locked: 0, lineups_locked: 0, points_processed: 0 },
+      { id: 4, game_round_number: 4, start_date: '2026-10-05', end_date: '2026-10-11', lock_time: null, locked: 0, lineups_locked: 0, points_processed: 0 },
+      { id: 5, game_round_number: 5, start_date: '2026-10-12', end_date: '2026-10-18', lock_time: null, locked: 0, lineups_locked: 0, points_processed: 0 }
+    ];
+    function games(week) {
+      if (week > 4) return [];
+      var out = [], order = clubs.slice().sort(function () { return rnd() - 0.5; });
+      for (var g = 0; g < 7; g++) out.push({ id: week * 100 + g, game_number: 23000 + week * 20 + g, home_team_id: order[2 * g], away_team_id: order[2 * g + 1],
+        start_time: new Date(Date.parse(rounds[week - 1].start_date + 'T17:00:00Z') + (g % 3) * 2 * DAY).toISOString(), final: 0, game_round: week, home_team_logo: 'x', away_team_logo: 'x' });
+      return out;
+    }
+    function ok(result) { return { status: 200, body: { success: true, messages: null, result: result } }; }
+    function known(uc) { return coaches.some(function (c) { return c.uc === uc; }); }
+
+    return function demoApi(path, params) {
+      params = params || {};
+      if (!known(params.user_code)) return { status: 401, body: { success: false, messages: 'Unauthenticated', result: null } };
+      if (path === '/gameround') return ok(Object.assign({}, rounds[2], { prev_game_round_number: 2, next_game_round_number: 4, first_game_round_number: 1, last_game_round_number: 24 }));
+      if (path === '/gamerounds') return ok({ current_page: 1, last_page: 1, data: rounds });
+      if (path === '/leagues') return ok({ current_page: 1, last_page: 1, data: [
+        { id: 999001, name: 'Hela Sverige (officiell)', type_id: 1, type: { id: 1, type: 'yearly', is_official: true } },
+        { id: 1, name: 'Demoligan', type_id: 5, type: { id: 5, type: 'custom', is_official: false } },
+        { id: 2, name: 'Jobbligan (demo)', type_id: 5, type: { id: 5, type: 'custom', is_official: false } }] });
+      if (path === '/clubs') return ok(clubs.map(function (c, i) { return { id: i + 1, code: c, name: c + ' (demo)', shortname: c, logo: 'https://example.invalid/l.svg' }; }));
+      if (path === '/games') return ok({ current_page: 1, last_page: 1, data: games(Number(params.game_week)) });
+      var m = /^\/leagues\/(\d+)\/teams$/.exec(path);
+      if (m) {
+        var r = Number(params.game_round_id) || 2;
+        var rows = coaches.map(function (c, k) {
+          return { id: 900 + k, points: pointsFor(c, r), total_points: pointsFor(c, 1) + (r === 2 ? pointsFor(c, 2) : 0), first_name: ['Anna', 'Johan', 'Sara', 'Erik', 'Maja', 'Oskar', 'Lina', 'Peter'][k], last_name: ['Lindqvist', 'Berg', 'Holm', 'Nyström', 'Åberg', 'Karlsson', 'Ek', 'Sjöberg'][k],
+            team_name: c.name, user_code: c.uc, league_team_id: 7000 + k, avatar: 'https://example.invalid/a.png', email: 'coach' + k + '@example.com',
+            contact: { Email: 'nested' + k + '@example.org', note: 'skriv till x' + k + '@example.net' } };
+        }).sort(function (a, b) { return b.points - a.points; });
+        rows.forEach(function (x, i) { x.rank = i + 1; x.previous_rank = ((i + 3) % rows.length) + 1; });
+        var page = Number(params.page) || 1, per = 5, last = Math.ceil(rows.length / per);
+        return ok({ current_page: page, last_page: last, per_page: per, total: rows.length, data: rows.slice((page - 1) * per, page * per), game_round_id: r });
+      }
+      var coach = coaches.filter(function (c) { return c.uc === params.user_code; })[0];
+      var rn = Number(params.game_round_number);
+      if (path === '/fantasy-points/line-up') {
+        if (rn >= 3) return { status: 422, body: { success: false, messages: { game_round: ['Fantasypoäng för den här spelomgången är inte tillgängliga'] }, result: null } };
+        var tl = lineupFor(coach, rn);
+        return ok({ next_games_list: {}, team_lineup: tl || { 'line-up1': [], 'line-up2': [], GK: null, bench: [] }, last_processed_event_id: '1' });
+      }
+      if (path === '/game-round/power-ups') {
+        var act = rn === 2 ? coach.card2 : '';
+        return ok(Object.keys(CARDS).map(function (code, i) {
+          return { id: i + 1, name: CARDS[code], short_name: code, multiplier: 2, type: 'seasonal', gameround_id: rn, is_active: code === act,
+            is_available: !(coach.cardsUsedBefore.indexOf(code) >= 0 || (rn > 2 && code === coach.card2)) };
+        }));
+      }
+      return { status: 404, body: { success: false, result: null } };
+    };
+  }
+
+  /* ---------- Självtest ---------- */
+  function selftest() {
+    var res = [];
+    var t = function (name, got, want) { var ok = JSON.stringify(got) === JSON.stringify(want); res.push({ name: name, ok: ok, detail: ok ? '' : 'fick ' + JSON.stringify(got) + ', väntade ' + JSON.stringify(want) }); };
+    var REF = '2026-09-21';
+    var P = function (o) { return Object.assign({ player_id: 1, points: 5, position: 'LW', dob: '1995-01-01', role: null, group: 'L1' }, o); };
+    var cm = function (o, card) { return computeMultiplier(P(o), card, REF); };
+
+    // Utan kort
+    t('inget kort: femma 1 = 1', cm({}, null), 1);
+    t('inget kort: kapten = 2', cm({ role: 'C' }, null), 2);
+    t('inget kort: assisterande = 1', cm({ role: 'VC' }, null), 1);
+    t('inget kort: bänk = 0', cm({ group: 'BENCH' }, null), 0);
+    // Toppa laget
+    t('TOP_TEAM: femma 1 = 2', cm({}, 'TOP_TEAM'), 2);
+    t('TOP_TEAM: målvakt = 2', cm({ group: 'GK', position: 'GK' }, 'TOP_TEAM'), 2);
+    t('TOP_TEAM: femma 2 = 0', cm({ group: 'L2' }, 'TOP_TEAM'), 0);
+    t('TOP_TEAM: bänk = 0', cm({ group: 'BENCH' }, 'TOP_TEAM'), 0);
+    t('TOP_TEAM: kapten i femma 1 = 2 (ingen bonus)', cm({ role: 'C' }, 'TOP_TEAM'), 2);
+    t('TOP_TEAM: kapten i femma 2 = 0 (bonus utgår)', cm({ role: 'C', group: 'L2' }, 'TOP_TEAM'), 0);
+    // Anfall
+    t('ATTACK: forward femma 2 = 2', cm({ group: 'L2', position: 'RW' }, 'ATTACK'), 2);
+    t('ATTACK: back = 1', cm({ position: 'LD' }, 'ATTACK'), 1);
+    t('ATTACK: målvakt = 1', cm({ group: 'GK', position: 'GK' }, 'ATTACK'), 1);
+    t('ATTACK: bänkforward = 0', cm({ group: 'BENCH', position: 'CE' }, 'ATTACK'), 0);
+    t('ATTACK: kapten forward = 2 (staplas ej)', cm({ role: 'C', position: 'CE' }, 'ATTACK'), 2);
+    t('ATTACK: kapten back = 2', cm({ role: 'C', position: 'RD' }, 'ATTACK'), 2);
+    // Försvar
+    t('DEFENSE: back = 2', cm({ position: 'RD' }, 'DEFENSE'), 2);
+    t('DEFENSE: forward = 1', cm({ position: 'LW' }, 'DEFENSE'), 1);
+    t('DEFENSE: kapten back = 2 (staplas ej)', cm({ role: 'C', position: 'LD' }, 'DEFENSE'), 2);
+    // Juniorer (till och med 20 år)
+    t('JUNIORS: 20 år på dagen = 2', cm({ dob: '2006-09-21' }, 'JUNIORS'), 2);
+    t('JUNIORS: 21 år = 1', cm({ dob: '2005-09-20' }, 'JUNIORS'), 1);
+    t('JUNIORS: kapten junior = 2 (staplas ej)', cm({ dob: '2007-01-01', role: 'C' }, 'JUNIORS'), 2);
+    t('JUNIORS: junior på bänk = 0', cm({ dob: '2007-01-01', group: 'BENCH' }, 'JUNIORS'), 0);
+    // Veteraner (från 33 år)
+    t('VETERANS: fyller 33 på dagen = 2', cm({ dob: '1993-09-21' }, 'VETERANS'), 2);
+    t('VETERANS: 32 år = 1', cm({ dob: '1993-09-22' }, 'VETERANS'), 1);
+    t('VETERANS: kapten veteran = 2 (staplas ej)', cm({ dob: '1980-01-01', role: 'C' }, 'VETERANS'), 2);
+    t('VETERANS: målvakt veteran = 2', cm({ dob: '1988-01-01', group: 'GK', position: 'GK' }, 'VETERANS'), 2);
+    // Fria byten
+    t('FREE_EXCHANGE: ingen multiplikator', cm({}, 'FREE_EXCHANGE'), 1);
+    t('FREE_EXCHANGE: kapten = 2', cm({ role: 'C' }, 'FREE_EXCHANGE'), 2);
+    // API-fältet går först
+    t('API multiplier används före egen beräkning', effectiveMultiplier(P({ multiplier: '0' }), 'ATTACK', REF), 0);
+    t('API multiplier 2 utan kort', effectiveMultiplier(P({ multiplier: 2 }), null, REF), 2);
+    t('bänk räknas aldrig trots API multiplier 2', effectiveMultiplier(P({ group: 'BENCH', benched: 1, multiplier: 2 }), 'TOP_TEAM', REF), 0);
+    t('saknat multiplier-fält -> egen beräkning', effectiveMultiplier(P({ dob: '1985-05-05' }), 'VETERANS', REF), 2);
+    t('grundpoäng = points / multiplier', basePoints({ points: 16 }, 2), 8);
+    // Kortnamn
+    t('normCard', ['Toppa laget TOP_TEAM', 'attack', 'DEFENCE', 'JUNIORS', 'VETERANS', 'FREE_EXCHANGE'].map(normCard), ['TOP_TEAM', 'ATTACK', 'DEFENSE', 'JUNIORS', 'VETERANS', 'FREE_EXCHANGE']);
+    t('activeCard hittar aktivt kort', activeCard([{ short_name: 'ATTACK', is_active: false }, { short_name: 'JUNIORS', is_active: true }]), { code: 'JUNIORS', name: 'Juniorer' });
+    t('activeCard null utan aktivt', activeCard([{ short_name: 'ATTACK', is_active: false }]), null);
+    // E-post
+    var nested = { success: true, result: { data: [{ team_name: 'Lag', email: 'a@b.se', user: { Email: 'c@d.se', contact: { e_mail: 'x', phone: '070' }, list: [{ mail: 'q@w.se', dob: '1990-01-01' }] }, note: 'maila mig på a@b.se' }] } };
+    var s = stripSensitive(nested);
+    t('e-post strippas rekursivt (inga adresser kvar)', JSON.stringify(s).indexOf('@'), -1);
+    t('e-postnycklar borta', /mail|phone/i.test(JSON.stringify(s)), false);
+    t('övriga fält kvar (team_name, dob)', [s.result.data[0].team_name, s.result.data[0].user.list[0].dob], ['Lag', '1990-01-01']);
+    // Uppställning
+    var mkp = function (id) { return { player_id: id, name: 'P' + id, position: 'LW' }; };
+    var tl = { 'line-up1': { LW: mkp(1), CE: mkp(2), RW: mkp(3), LD: mkp(4), RD: mkp(5), total_points: 40 }, 'line-up2': { LW: mkp(6), CE: mkp(7), RW: mkp(8), LD: mkp(9), RD: mkp(10), total_points: 3 }, GK: mkp(11), bench: { GK: mkp(12), D: mkp(13), CE: mkp(14), W: mkp(15) } };
+    var flat = flattenLineup(tl);
+    t('flattenLineup: 15 spelare, total_points ignoreras', flat.length, 15);
+    t('flattenLineup: grupper', flat.map(function (p) { return p.group; }).join(''), 'L1L1L1L1L1L2L2L2L2L2GKBENCHBENCHBENCHBENCH');
+    // Byten
+    var tl2 = JSON.parse(JSON.stringify(tl)); var tmp = tl2['line-up2'].LW; tl2['line-up2'].LW = tl2.bench.W; tl2.bench.W = tmp;
+    var d0 = transfersDiff(flat, flattenLineup(tl2));
+    t('byten: bänkspelare till kedjan räknas inte', [d0.in.length, d0.out.length], [0, 0]);
+    var tl3 = JSON.parse(JSON.stringify(tl2)); tl3['line-up1'].CE = mkp(99);
+    var d1 = transfersDiff(flat, flattenLineup(tl3));
+    t('byten: ett byte', [d1.in.map(function (p) { return p.player_id; }), d1.out.map(function (p) { return p.player_id; })], [[99], [2]]);
+    t('byten: ny coach utan förra truppen', transfersDiff([], flat).newCoach, true);
+    // Välj mitt lag
+    var teams = [{ user_code: 'AAA' }, { user_code: 'BBB' }, { user_code: 'CCC' }];
+    t('välj mitt lag: förval = angiven user_code', pickMyTeam(teams, { uc: 'BBB' }), 'BBB');
+    t('välj mitt lag: team-parameter vinner', pickMyTeam(teams, { uc: 'BBB', team: 'CCC' }), 'CCC');
+    t('välj mitt lag: okänt team -> user_code', pickMyTeam(teams, { uc: 'AAA', team: 'ZZZ' }), 'AAA');
+    t('välj mitt lag: kod utanför ligan -> inget', pickMyTeam(teams, { uc: 'ZZZ' }), null);
+    var named = [{ user_code: 'AAA', team_name: 'Nystuga Puck Hunters SK 🏆' }, { user_code: 'BBB', team_name: 'Självmålet' }];
+    t('välj mitt lag: via lagnamn', pickMyTeam(named, { lag: 'Självmålet', uc: 'AAA' }), 'BBB');
+    t('välj mitt lag: lagnamn skiftlägesokänsligt', pickMyTeam(named, { lag: '  nystuga puck hunters sk 🏆 ', uc: 'BBB' }), 'AAA');
+    t('välj mitt lag: okänt lagnamn -> user_code', pickMyTeam(named, { lag: 'Finns inte', uc: 'AAA' }), 'AAA');
+    // Importance
+    var E = function (uc, ps) { return { uc: uc, name: uc, players: ps.map(function (x) { return { player_id: x[0], name: 'P' + x[0], eff: x[1], base: x[2], group: 'L1' }; }) }; };
+    var imp = impact('me', [E('me', [[1, 2, 5], [2, 1, 3]]), E('a', [[1, 1, 5], [3, 2, 4]]), E('b', [[3, 1, 4]])]);
+    var byId = {}; imp.forEach(function (r) { byId[r.player_id] = r; });
+    t('importance: min kapten mot snitt', byId[1].importance, 1.5);
+    t('skadar mig: spelare jag saknar', [byId[3].importance, byId[3].net], [-1.5, -6]);
+    var rc = rivalCompare(E('me', [[1, 2, 5]]), E('r', [[1, 1, 5], [3, 1, 4]]));
+    t('rivaljämförelse netto', rc.map(function (r) { return [r.player_id, r.net]; }), [[1, 5], [3, -4]]);
+    // Delningslänk
+    t('parseShare full länk', parseShare('file:///C:/x/Fantasy-SHL.html?league=14303&uc=AbC123&team=XyZ789#x'), { league: '14303', uc: 'AbC123', team: 'XyZ789' });
+    t('parseShare avvisar skräp', parseShare('?league=abc&uc=<script>'), {});
+    t('buildShareQuery med lagnamn', buildShareQuery({ league: '1', uc: 'A', lag: 'Puck & Co 🏆' }), '?league=1&uc=A&lag=Puck%20%26%20Co%20%F0%9F%8F%86');
+    t('parseShare lagnamn tur och retur', parseShare(buildShareQuery({ league: '1', uc: 'Abc', lag: 'Puck & Co 🏆' })), { league: '1', uc: 'Abc', lag: 'Puck & Co 🏆' });
+    t('parseShare avvisar lagnamn med <', parseShare('?lag=%3Cscript%3E').lag, undefined);
+    // QR-kod
+    var qa = qrMatrix('HELLO'), qb = qrMatrix('https://example.github.io/fantasy-shl/?league=14303&uc=AbCdEfGh');
+    t('QR: version 1 för kort text (21x21)', qa.length, 21);
+    t('QR: ligalänk ryms (version 5, 37x37)', qb.length, 37);
+    t('QR: sökmönster i hörnet', [qb[0][0], qb[0][6], qb[1][1], qb[2][2], qb[6][6]], [true, true, false, true, true]);
+    t('QR: för lång text ger null', qrMatrix('x'.repeat(1000)), null);
+    t('QR: svg skapas', /^<svg[\s\S]*<path d="M/.test(qrSvg('HELLO')), true);
+    // Startsidans inmatning
+    t('inmatning: bara lag-ID', parseAnyInput('  AbC123xy '), { uc: 'AbC123xy' });
+    t('inmatning: fantasy.shl.se-lag', parseAnyInput('https://fantasy.shl.se/app/points?user_code=Xy12Zw34'), { uc: 'Xy12Zw34' });
+    t('inmatning: fantasy.shl.se-liga (bara nummer)', parseAnyInput('https://fantasy.shl.se/app/leagues/14303'), { league: '14303' });
+    t('inmatning: appens ligalänk', parseAnyInput('file:///C:/x/Fantasy-SHL.html?league=14303&uc=AbC123'), { league: '14303', uc: 'AbC123', share: true });
+    t('inmatning: skräp', parseAnyInput('hej hopp!'), {});
+    t('inmatning: inklistrad profil – bara koden, inget annat', parseAnyInput('{"success":true,"result":{"id":5,"email":"a@b.se","dob":"1990-01-01","user_code":"M0abc123","team_name":"X"}}'), { uc: 'M0abc123', profile: true });
+    // Sök lag på för- och efternamn
+    var people = [{ user_code: 'A', rank: 3, first_name: 'Anna', last_name: 'Öberg', team_name: 'Puckarna' },
+                  { user_code: 'B', rank: 1, first_name: 'Johan', last_name: 'Andersson', team_name: 'Anna HC' },
+                  { user_code: 'C', rank: 2, first_name: 'Johan', last_name: 'Berg', team_name: 'Nystuga Puck Hunters SK 🏆' }];
+    var codes = function (list) { return list.map(function (t) { return t.user_code; }); };
+    t('sök: för- och efternamn, utan å/ä/ö', codes(searchTeams(people, 'anna oberg')), ['A']);
+    t('sök: efternamn först', codes(searchTeams(people, 'Öberg Anna')), ['A']);
+    t('sök: förnamn ger flera, bäst placering först', codes(searchTeams(people, 'johan')), ['B', 'C']);
+    t('sök: personnamn före lagnamn', codes(searchTeams(people, 'anna')), ['A', 'B']);
+    t('sök: på lagnamn', codes(searchTeams(people, 'nystuga')), ['C']);
+    t('sök: början av namnet räcker', codes(searchTeams(people, 'joh ber')), ['C']);
+    t('sök: för kort sökning ger inget', codes(searchTeams(people, 'a')), []);
+    t('sök: ingen träff', codes(searchTeams(people, 'zlatan')), []);
+    // Ligalistan: bara egna ligor
+    t('customLeagues utesluter officiella ligor', customLeagues([
+      { id: 1, name: 'Hela Sverige', type_id: 1, type: { is_official: true } }, { id: 7, name: 'FBK', type_id: 4, type: { is_official: true } },
+      { id: 14303, name: 'Verken-Ligan', type_id: 5, type: { is_official: false } }, { id: 13366, name: 'Andra ligan', type_id: 5 }]).map(function (l) { return l.id; }), ['13366', '14303']);
+    // Demo innehåller e-post som måste strippas, och kort enligt krav
+    var api = makeDemo(Date.parse('2026-09-24T12:00:00Z'));
+    var rawTeams = api('/leagues/1/teams', { page: 1, game_round_id: 2, user_code: 'DEMOA1' });
+    t('demo: råsvar innehåller e-post (testdata)', JSON.stringify(rawTeams).indexOf('@') > 0, true);
+    t('demo: strippat svar saknar e-post', JSON.stringify(stripSensitive(rawTeams)).indexOf('@'), -1);
+    var cards = ['DEMOA1', 'DEMOB1', 'DEMOC1', 'DEMOD1'].map(function (uc) { var a = activeCard(api('/game-round/power-ups', { game_round_number: 2, user_code: uc }).body.result); return a && a.code; });
+    t('demo: rivaler med Toppa laget och Juniorer', cards, [null, 'TOP_TEAM', 'JUNIORS', 'VETERANS']);
+    t('demo: omgång 3 före deadline ger 422', api('/fantasy-points/line-up', { game_round_number: 3, user_code: 'DEMOA1' }).status, 422);
+    t('demo: fel user_code ger 401', api('/gameround', { user_code: 'NOPE' }).status, 401);
+    return res;
+  }
+
+  /* ---------- QR-kod (byte-läge, felkorrigering M), efter Project Nayukis öppna algoritm. Inga externa bibliotek. ---------- */
+  var QR_ECC_PER_BLOCK_M = [-1, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26];
+  var QR_BLOCKS_M = [-1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16];
+  function qrRawModules(ver) {
+    var r = (16 * ver + 128) * ver + 64;
+    if (ver >= 2) { var na = Math.floor(ver / 7) + 2; r -= (25 * na - 10) * na - 55; if (ver >= 7) r -= 36; }
+    return r;
+  }
+  function qrDataCodewords(ver) { return Math.floor(qrRawModules(ver) / 8) - QR_ECC_PER_BLOCK_M[ver] * QR_BLOCKS_M[ver]; }
+  function gfMul(x, y) { var z = 0; for (var i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> i) & 1) * x; } return z & 0xFF; }
+  function rsDivisor(degree) {
+    var r = []; for (var i = 0; i < degree - 1; i++) r.push(0); r.push(1);
+    var root = 1;
+    for (i = 0; i < degree; i++) {
+      for (var j = 0; j < r.length; j++) { r[j] = gfMul(r[j], root); if (j + 1 < r.length) r[j] ^= r[j + 1]; }
+      root = gfMul(root, 0x02);
+    }
+    return r;
+  }
+  function rsRemainder(data, div) {
+    var r = div.map(function () { return 0; });
+    data.forEach(function (b) {
+      var f = b ^ r.shift(); r.push(0);
+      div.forEach(function (c, i) { r[i] ^= gfMul(c, f); });
+    });
+    return r;
+  }
+  function utf8Bytes(s) { var out = [], e = unescape(encodeURIComponent(String(s))); for (var i = 0; i < e.length; i++) out.push(e.charCodeAt(i)); return out; }
+  // Returnerar en kvadratisk matris av true (mörk) / false (ljus), eller null om texten är för lång.
+  function qrMatrix(text) {
+    var bytes = utf8Bytes(text), ver = 0;
+    for (var v = 1; v <= 20; v++) { if (4 + (v < 10 ? 8 : 16) + 8 * bytes.length <= qrDataCodewords(v) * 8) { ver = v; break; } }
+    if (!ver) return null;
+    var cap = qrDataCodewords(ver) * 8, bits = [];
+    var put = function (val, len) { for (var i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+    put(4, 4); put(bytes.length, ver < 10 ? 8 : 16); bytes.forEach(function (b) { put(b, 8); });
+    put(0, Math.min(4, cap - bits.length));
+    put(0, (8 - bits.length % 8) % 8);
+    for (var pad = 0xEC; bits.length < cap; pad ^= 0xEC ^ 0x11) put(pad, 8);
+    var data = []; for (var i = 0; i < bits.length; i += 8) { var b = 0; for (var k = 0; k < 8; k++) b = (b << 1) | bits[i + k]; data.push(b); }
+    // Felkorrigering och sammanflätning
+    var nb = QR_BLOCKS_M[ver], eccLen = QR_ECC_PER_BLOCK_M[ver], raw = Math.floor(qrRawModules(ver) / 8);
+    var nShort = nb - raw % nb, shortLen = Math.floor(raw / nb), div = rsDivisor(eccLen), blocks = [], pos = 0;
+    for (i = 0; i < nb; i++) {
+      var dat = data.slice(pos, pos + shortLen - eccLen + (i < nShort ? 0 : 1)); pos += dat.length;
+      var ecc = rsRemainder(dat, div); if (i < nShort) dat.push(0);
+      blocks.push(dat.concat(ecc));
+    }
+    var cw = [];
+    for (i = 0; i < blocks[0].length; i++) for (var j = 0; j < blocks.length; j++) if (i !== shortLen - eccLen || j >= nShort) cw.push(blocks[j][i]);
+    // Funktionsmönster
+    var size = ver * 4 + 17, mod = [], fn = [];
+    for (i = 0; i < size; i++) { mod.push(new Array(size).fill(false)); fn.push(new Array(size).fill(false)); }
+    var setF = function (x, y, d) { mod[y][x] = d; fn[y][x] = true; };
+    for (i = 0; i < size; i++) { setF(6, i, i % 2 === 0); setF(i, 6, i % 2 === 0); }
+    [[3, 3], [size - 4, 3], [3, size - 4]].forEach(function (c) {
+      for (var dy = -4; dy <= 4; dy++) for (var dx = -4; dx <= 4; dx++) {
+        var d = Math.max(Math.abs(dx), Math.abs(dy)), xx = c[0] + dx, yy = c[1] + dy;
+        if (xx >= 0 && xx < size && yy >= 0 && yy < size) setF(xx, yy, d !== 2 && d !== 4);
+      }
+    });
+    var al = [];
+    if (ver > 1) {
+      var na = Math.floor(ver / 7) + 2, step = Math.ceil((ver * 4 + 4) / (na * 2 - 2)) * 2;
+      al = [6]; for (var p2 = size - 7; al.length < na; p2 -= step) al.splice(1, 0, p2);
+    }
+    al.forEach(function (ay, ai) {
+      al.forEach(function (ax, aj) {
+        if ((ai === 0 && aj === 0) || (ai === 0 && aj === al.length - 1) || (ai === al.length - 1 && aj === 0)) return;
+        for (var dy = -2; dy <= 2; dy++) for (var dx = -2; dx <= 2; dx++) setF(ax + dx, ay + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+      });
+    });
+    var drawFormat = function (mask) {
+      var d = (0 << 3) | mask, rem = d; // M = 0
+      for (var q = 0; q < 10; q++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+      var fb = ((d << 10) | rem) ^ 0x5412, bit = function (n) { return ((fb >>> n) & 1) !== 0; };
+      for (q = 0; q <= 5; q++) setF(8, q, bit(q));
+      setF(8, 7, bit(6)); setF(8, 8, bit(7)); setF(7, 8, bit(8));
+      for (q = 9; q < 15; q++) setF(14 - q, 8, bit(q));
+      for (q = 0; q < 8; q++) setF(size - 1 - q, 8, bit(q));
+      for (q = 8; q < 15; q++) setF(8, size - 15 + q, bit(q));
+      setF(8, size - 8, true);
+    };
+    drawFormat(0);
+    if (ver >= 7) {
+      var rem = ver; for (i = 0; i < 12; i++) rem = (rem << 1) ^ ((rem >>> 11) * 0x1F25);
+      var vb = (ver << 12) | rem;
+      for (i = 0; i < 18; i++) { var bt = ((vb >>> i) & 1) !== 0, a = size - 11 + i % 3, bb = Math.floor(i / 3); setF(a, bb, bt); setF(bb, a, bt); }
+    }
+    // Datamoduler i sicksack
+    var bi = 0;
+    for (var right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (var vert = 0; vert < size; vert++) for (j = 0; j < 2; j++) {
+        var x = right - j, up = ((right + 1) & 2) === 0, y = up ? size - 1 - vert : vert;
+        if (!fn[y][x] && bi < cw.length * 8) { mod[y][x] = ((cw[bi >>> 3] >>> (7 - (bi & 7))) & 1) !== 0; bi++; }
+      }
+    }
+    var maskFn = [
+      function (x, y) { return (x + y) % 2 === 0; }, function (x, y) { return y % 2 === 0; },
+      function (x) { return x % 3 === 0; }, function (x, y) { return (x + y) % 3 === 0; },
+      function (x, y) { return (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0; }, function (x, y) { return x * y % 2 + x * y % 3 === 0; },
+      function (x, y) { return (x * y % 2 + x * y % 3) % 2 === 0; }, function (x, y) { return ((x + y) % 2 + x * y % 3) % 2 === 0; }];
+    var applyMask = function (m) { for (var yy = 0; yy < size; yy++) for (var xx = 0; xx < size; xx++) if (!fn[yy][xx] && maskFn[m](xx, yy)) mod[yy][xx] = !mod[yy][xx]; };
+    var penalty = function () {
+      var pts = 0, dark = 0, yy, xx, run, k2;
+      var lines = function (get) {
+        for (var a = 0; a < size; a++) {
+          run = 1;
+          for (var c = 1; c <= size; c++) {
+            if (c < size && get(a, c) === get(a, c - 1)) run++;
+            else { if (run >= 5) pts += run - 2; run = 1; }
+          }
+          var row = []; for (c = 0; c < size; c++) row.push(get(a, c) ? 1 : 0);
+          var str = '0000' + row.join('') + '0000';
+          for (k2 = str.indexOf('00001011101'); k2 >= 0; k2 = str.indexOf('00001011101', k2 + 1)) pts += 40;
+          for (k2 = str.indexOf('10111010000'); k2 >= 0; k2 = str.indexOf('10111010000', k2 + 1)) pts += 40;
+        }
+      };
+      lines(function (a, c) { return mod[a][c]; });
+      lines(function (a, c) { return mod[c][a]; });
+      for (yy = 0; yy < size - 1; yy++) for (xx = 0; xx < size - 1; xx++) {
+        var cc = mod[yy][xx]; if (cc === mod[yy][xx + 1] && cc === mod[yy + 1][xx] && cc === mod[yy + 1][xx + 1]) pts += 3;
+      }
+      for (yy = 0; yy < size; yy++) for (xx = 0; xx < size; xx++) if (mod[yy][xx]) dark++;
+      var total = size * size;
+      pts += (Math.ceil(Math.abs(dark * 20 - total * 10) / total) - 1) * 10;
+      return pts;
+    };
+    var best = 0, bestPts = Infinity;
+    for (var m = 0; m < 8; m++) {
+      applyMask(m); drawFormat(m);
+      var pp = penalty(); if (pp < bestPts) { bestPts = pp; best = m; }
+      applyMask(m);
+    }
+    applyMask(best); drawFormat(best);
+    return mod;
+  }
+  function qrSvg(text, dark) {
+    var m = qrMatrix(text); if (!m) return '';
+    var n = m.length, q = 4, d = '';
+    for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) if (m[y][x]) d += 'M' + (x + q) + ' ' + (y + q) + 'h1v1h-1z';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (n + 2 * q) + ' ' + (n + 2 * q) + '" shape-rendering="crispEdges" role="img" aria-label="QR-kod">' +
+      '<rect width="100%" height="100%" fill="#fff"/><path d="' + d + '" fill="' + (dark || '#181d26') + '"/></svg>';
+  }
+
+  var FSL = { qrMatrix: qrMatrix, qrSvg: qrSvg, stripSensitive: stripSensitive, CARDS: CARDS, normCard: normCard, activeCard: activeCard, usedCards: usedCards, flattenLineup: flattenLineup,
+    posClass: posClass, ageAt: ageAt, computeMultiplier: computeMultiplier, effectiveMultiplier: effectiveMultiplier, basePoints: basePoints,
+    prepareTeam: prepareTeam, transfersDiff: transfersDiff, pickMyTeam: pickMyTeam, ownership: ownership, impact: impact, rivalCompare: rivalCompare,
+    parseShare: parseShare, parseAnyInput: parseAnyInput, buildShareQuery: buildShareQuery, customLeagues: customLeagues, searchTeams: searchTeams, MAX_LEAGUE_TEAMS: MAX_LEAGUE_TEAMS, makeDemo: makeDemo, selftest: selftest };
+  root.FSL = FSL;
+  if (typeof module !== 'undefined' && module.exports) module.exports = FSL;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+
+<script id="fsl-app">
+(function () {
+  'use strict';
+  var FSL = window.FSL;
+  // En kompisfil har ligan förinställd (window.FSL_PRESET). Värdena kontrolleras innan de används.
+  // Funktioner som kan slås av och på.
+  var FEATURES = { impact: false }; // "Skadar mig": avstängd tills vidare
+  // Låst liga (sätts av build_web.py --league). Då visas och används bara den ligan.
+  var FIXED = (function (x) {
+    return x && /^\d{1,9}$/.test(String(x.id)) ? { id: String(x.id), name: String(x.name || ('Liga ' + x.id)).slice(0, 80) } : null;
+  })(window.FSL_FIXED_LEAGUE);
+  var PRESET = (function (x) {
+    return x && /^[A-Za-z0-9_-]{3,64}$/.test(String(x.uc)) && /^\d{1,9}$/.test(String(x.league))
+      ? { uc: String(x.uc), league: String(x.league), name: String(x.name || '').slice(0, 80) } : null;
+  })(window.FSL_PRESET);
+  // Körs sidan via fantasy_shl_companion.py går anropen via den lokala proxyn, som själv håller 1 anrop/s och strippar e-post.
+  var PROXY = typeof window.FSL_PROXY === 'string' ? window.FSL_PROXY : '';
+  var BASE = PROXY || 'https://fantasy.shl.se/api/v1';
+  var MIN_GAP_MS = PROXY ? 0 : 1100; // högst ett anrop per sekund
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var GROUP_LABEL = { L1: 'Femma 1', L2: 'Femma 2', GK: 'Målvakt', BENCH: 'Bänk' };
+
+  var S = { demo: null, league: '', uc: '', myUc: null, rivalUc: null, rounds: [], current: null, roundNo: null, teams: [], entries: {}, prev: {},
+    clubs: null, games: {}, token: 0, tab: 'mine', expanded: {}, view: 'rink', sort: 'rank', leagueName: '', leagues: [], confirmed: false };
+  try { if (localStorage.getItem('fsl-view') === 'list') S.view = 'list'; } catch (e) { /* ignoreras */ }
+  // Mitt lag sparas som lagnamn per liga, bara i den här webbläsaren.
+  function getLag(league) { try { return localStorage.getItem('fsl-lag:' + league) || ''; } catch (e) { return ''; } }
+  function setLag(league, name) { try { if (name) localStorage.setItem('fsl-lag:' + league, name); } catch (e) { /* ignoreras */ } }
+  function getBig() { var b = {}; try { b = JSON.parse(localStorage.getItem('fsl-big') || '{}') || {}; } catch (e) { /* ignoreras */ } return Object.assign(b, S.big || {}); }
+  function setBig(id, n) { S.big = Object.assign({}, S.big || {}); S.big[id] = n; var b = getBig(); try { if (!S.demo) localStorage.setItem('fsl-big', JSON.stringify(b)); } catch (e) { /* ignoreras */ } }
+  // Koden sparas bara lokalt i webbläsaren, så att appen öppnas direkt nästa gång.
+  function getUc() { try { return localStorage.getItem('fsl-uc') || ''; } catch (e) { return ''; } }
+  function setUc(uc) { try { localStorage.setItem('fsl-uc', uc); } catch (e) { /* ignoreras */ } renderSaved(); }
+  function renderSaved() {
+    var uc = getUc(), lg = getLastLeague();
+    var el = document.getElementById('savedInfo');
+    if (el) el.textContent = uc ? 'kod ' + mask(uc) + (lg ? ', liga ' + lg : '') : 'inget';
+  }
+  function forgetMe() {
+    try {
+      Object.keys(localStorage).filter(function (k) { return k.indexOf('fsl-') === 0 || k.indexOf('fsl1:') === 0; })
+        .forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) { /* ignoreras */ }
+    location.href = location.href.split('?')[0].split('#')[0];
+  }
+  // Angavs koden som eget lag-ID är kodens lag ditt i alla ligor.
+  function getOwn() { try { return localStorage.getItem('fsl-own') || ''; } catch (e) { return ''; } }
+  function setOwn(uc) { try { if (uc) localStorage.setItem('fsl-own', uc); else localStorage.removeItem('fsl-own'); } catch (e) { /* ignoreras */ } }
+  function getLeagueName(id) { try { return id ? localStorage.getItem('fsl-lname:' + id) || '' : ''; } catch (e) { return ''; } }
+  function setLeagueName(id, name) { try { if (id && name && !S.demo) localStorage.setItem('fsl-lname:' + id, name); } catch (e) { /* ignoreras */ } }
+  // Vilken liga appen kan söka i utan att fråga: senast använda kod/liga, annars kompisfilens förinställning.
+  function access() {
+    if (S.access && S.access.uc) return S.access;
+    var uc = getUc() || (PRESET ? PRESET.uc : '');
+    if (!uc) return null;
+    var league = FIXED ? FIXED.id : (getLastLeague() || (PRESET ? PRESET.league : ''));
+    return { uc: uc, league: league, name: FIXED ? FIXED.name : (getLeagueName(league) || (PRESET && PRESET.league === league ? PRESET.name : '')) };
+  }
+  function showLanding(on) {
+    document.body.classList.toggle('landing', !!on);
+    if (!on) return;
+    S.token++; // avbryt pågående hämtning så att sökningen inte köar bakom den
+    setStatus('');
+    renderLanding();
+    window.scrollTo(0, 0);
+    setTimeout(function () { var el = access() ? $('#lName') : $('#lId'); if (el) el.focus(); }, 60);
+  }
+  function renderLanding() {
+    var acc = access();
+    $('#lNameHint').textContent = acc ? '(i ' + (acc.name || (acc.league ? 'liga ' + acc.league : 'dina ligor')) + ')' : '';
+    $('#leagueLabel').textContent = FIXED ? FIXED.name : (acc && acc.name ? acc.name : 'Kompisligan');
+    if (!acc && !$('#lResults').innerHTML) $('#lResults').innerHTML = '';
+  }
+  function landMsg(el, html, isErr) { el.innerHTML = html || ''; el.classList.toggle('err', !!isErr); }
+  function landingGo() {
+    var raw = $('#lId').value;
+    var pz = FSL.parseAnyInput(raw);
+    if (pz.profile || /[@{]/.test(raw)) $('#lId').value = pz.uc || ''; // inklistrad profil: behåll bara koden, kasta resten (e-post m.m.)
+    var box = $('#lIdMsg');
+    if (!pz.uc && pz.league) {
+      S.access = Object.assign({}, access() || {}, { league: pz.league });
+      landMsg(box, 'Det där är ligans adress (liga ' + esc(pz.league) + '). Klicka på <b>ditt eget lag</b> i ligan på fantasy.shl.se och kopiera den adressen – den innehåller ditt lag-ID.', true);
+      return;
+    }
+    if (!pz.uc) { landMsg(box, 'Skriv ditt lag-ID eller klistra in en länk.', true); return; }
+    if (pz.share && !pz.lag && !pz.team) {
+      // En ligalänk från en kompis: nu vet vi ligan – sök ditt namn.
+      S.access = FIXED ? { uc: pz.uc, league: FIXED.id, name: FIXED.name } : { uc: pz.uc, league: pz.league || '', name: getLeagueName(pz.league) };
+      S.landTeams = {};
+      renderLanding();
+      landMsg(box, 'Ligalänken fungerar. Skriv nu ditt namn nedan och tryck <b>SÖK</b>.');
+      $('#lName').focus();
+      return;
+    }
+    landMsg(box, '');
+    // Liga: från länken, annars en liga som angetts tidigare på startsidan (t.ex. fantasy.shl.se-ligaadressen).
+    $('#uc').value = pz.uc; $('#league').value = pz.league || (S.access && S.access.league) || '';
+    S.myUc = null; S.rivalUc = null;
+    showLanding(false);
+    start({ ownCode: !pz.share, lag: pz.lag, team: pz.team, fromLanding: true });
+    $('#lId').value = '';
+  }
+  function landingTeams(uc, league) {
+    S.landTeams = S.landTeams || {};
+    if (!S.landTeams[league] && league === S.league && uc === S.uc && S.teams.length) S.landTeams[league] = S.teams.slice(); // redan hämtad
+    if (S.landTeams[league]) return Promise.resolve(S.landTeams[league]);
+    var all = [], page = 1;
+    function next() {
+      return apiGet('/leagues/' + league + '/teams', { page: page, user_code: uc }).then(function (r) {
+        if (r.network) throw new Error('Kunde inte nå fantasy.shl.se. Kontrollera internet.');
+        if (r.status === 401) throw new Error('Koden fungerar inte för den här ligan. Be om en ny länk, eller ange ditt eget lag-ID ovan.');
+        if (r.status !== 200) throw new Error('Ligan svarade ' + r.status + '.');
+        var res = resultOf(r) || {};
+        if (Number(res.total) > FSL.MAX_LEAGUE_TEAMS) throw new Error('Ligan har ' + res.total + ' lag – för stor för namnsökning.');
+        all = all.concat(listOf(res));
+        if (page < (Number(res.last_page) || 1) && page < 10) { page++; return next(); }
+        S.landTeams[league] = all;
+        return all;
+      });
+    }
+    return next();
+  }
+  function ensureLeague(acc) {
+    if (FIXED) { acc.league = FIXED.id; acc.name = FIXED.name; }
+    if (acc.league) return Promise.resolve(acc);
+    return apiGet('/leagues', { per_page: 1000, user_code: acc.uc }).then(function (r) {
+      if (r.status === 401) throw new Error('Koden godtogs inte. Kontrollera lag-ID:t.');
+      var big = getBig();
+      var lg = FSL.customLeagues(listOf(resultOf(r))).filter(function (l) { return !big[l.id]; })[0];
+      if (!lg) throw new Error('Hittade ingen kompisliga för koden.');
+      acc.league = lg.id; acc.name = acc.name || lg.name;
+      return acc;
+    });
+  }
+  var landTimer = null, landToken = 0;
+  function landingSearch(fromTyping) {
+    var q = $('#lName').value.trim();
+    var box = $('#lResults');
+    var acc = access();
+    if (!acc) {
+      if (!fromTyping) box.innerHTML = '<p class="lmsg err">För att söka på namn behöver appen veta vilken liga du är med i. Ange ditt lag-ID ovan en gång (se <b>Vet du inte ditt lag-ID?</b>), eller klistra in ligalänken du fått från en kompis och tryck <b>KÖR</b>.</p>';
+      return;
+    }
+    if (q.length < 2) { box.innerHTML = fromTyping ? '' : '<p class="lmsg err">Skriv minst två bokstäver.</p>'; return; }
+    var tok = ++landToken;
+    if (!(S.landTeams && S.landTeams[acc.league])) box.innerHTML = '<p class="lmsg">Söker i ' + esc(acc.name || 'ligan') + '…</p>';
+    ensureLeague(acc).then(function (a) {
+      return landingTeams(a.uc, a.league).then(function (teams) {
+        if (tok !== landToken) return;
+        renderLanding();
+        var hits = FSL.searchTeams(teams, q);
+        var words = q.split(/\s+/);
+        if (!hits.length) { box.innerHTML = '<p class="lmsg">Inga träffar på <b>' + esc(q) + '</b> i ' + esc(a.name || 'ligan') + '. Prova bara efternamnet eller lagnamnet.</p>'; return; }
+        box.innerHTML = hits.slice(0, 6).map(function (t) {
+          var person = [t.first_name, t.last_name].filter(Boolean).join(' ');
+          var ini = (String(t.first_name || t.team_name || '?').charAt(0) + String(t.last_name || '').charAt(0)).toUpperCase();
+          return '<button class="hit" data-landpick="' + esc(t.user_code) + '"><span class="av">' + esc(ini) + '</span><span class="tx"><b>' + highlight(person || t.team_name, words) + '</b>' +
+            '<span>' + (person ? highlight(t.team_name, words) + ' · ' : '') + 'plats ' + esc(t.rank) + '</span></span><span class="go">Välj ›</span></button>';
+        }).join('') + (hits.length > 6 ? '<p class="lmsg">' + (hits.length - 6) + ' till – skriv mer av namnet.</p>' : '');
+      });
+    }).catch(function (e) { if (tok === landToken) box.innerHTML = '<p class="lmsg err">' + esc(e.message) + '</p>'; });
+  }
+  function landingPick(code) {
+    var acc = access(); if (!acc) return;
+    var t = ((S.landTeams || {})[acc.league] || []).filter(function (x) { return x.user_code === code; })[0];
+    if (!t) return;
+    setLag(acc.league, t.team_name);
+    $('#uc').value = acc.uc; $('#league').value = acc.league;
+    S.myUc = null; S.rivalUc = null;
+    showLanding(false);
+    start({ lag: t.team_name, fromLanding: true });
+  }
+  function getLastLeague() { try { return localStorage.getItem('fsl-league') || ''; } catch (e) { return ''; } }
+  function setLastLeague(id) { try { if (id && !S.demo) localStorage.setItem('fsl-league', id); } catch (e) { /* ignoreras */ } renderSaved(); }
+  function renderLeagueSelect() {
+    var lab = $('#leagueSel').closest('label'); if (lab) lab.classList.toggle('hidden', !!FIXED && !S.demo);
+    var list = (S.leagues || []).slice();
+    if (S.league && !list.some(function (l) { return l.id === S.league; })) list.unshift({ id: S.league, name: S.leagueName || 'Liga ' + S.league });
+    var big = S.big || getBig();
+    $('#leagueSel').innerHTML = list.map(function (l) { return '<option value="' + esc(l.id) + '">' + esc(l.name) + (big[l.id] ? ' (för stor, ' + big[l.id] + ' lag)' : '') + '</option>'; }).join('');
+    $('#leagueSel').value = S.league;
+  }
+
+  /* ---------- Nätverk: bara GET, kö med 1,1 s mellanrum, strippning innan något sparas ---------- */
+  var mem = {};
+  var lastCall = 0, chain = Promise.resolve();
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function throttled(fn) {
+    var run = chain.then(function () {
+      var w = lastCall + MIN_GAP_MS - Date.now();
+      return (w > 0 ? sleep(w) : null);
+    }).then(function () { lastCall = Date.now(); return fn(); });
+    chain = run.catch(function () {});
+    return run;
+  }
+  function qs(params) { return Object.keys(params).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); }).join('&'); }
+  function lsKey(path, params) { var s = path + '?' + qs(params), h = 5381; for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return 'fsl1:' + (h >>> 0).toString(36); }
+  function lsGet(k) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ignoreras */ } }
+
+  function apiGet(path, params, opts) {
+    opts = opts || {};
+    var key = path + '?' + qs(params);
+    if (mem[key]) return Promise.resolve(mem[key]);
+    if (opts.persist) { var hit = lsGet(lsKey(path, params)); if (hit) { mem[key] = hit; return Promise.resolve(hit); } }
+    if (S.demo) {
+      var r = S.demo(path, params);
+      var out = { status: r.status, body: FSL.stripSensitive(r.body) };
+      return sleep(40).then(function () { if (out.status === 200) mem[key] = out; return out; });
+    }
+    return throttled(function () {
+      return fetch(BASE + path + '?' + qs(params), { method: 'GET', credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer', headers: { Accept: 'application/json' } });
+    }).then(function (res) {
+      return res.json().catch(function () { return null; }).then(function (json) {
+        var out = { status: res.status, body: FSL.stripSensitive(json) };
+        if (res.ok) { mem[key] = out; if (opts.persist) lsSet(lsKey(path, params), out); }
+        return out;
+      });
+    }, function () {
+      return { status: 0, body: null, network: true };
+    });
+  }
+  function resultOf(r) { return r && r.body ? r.body.result : null; }
+  function listOf(x) { return Array.isArray(x) ? x : (x && Array.isArray(x.data) ? x.data : []); }
+
+  /* ---------- Hjälpare ---------- */
+  function isLocked(r) { return !!r && (Number(r.locked) === 1 || Number(r.lineups_locked) === 1); }
+  function roundObj(n) { return S.rounds.filter(function (r) { return Number(r.game_round_number) === Number(n); })[0]; }
+  function teamOf(uc) { return S.teams.filter(function (x) { return x.user_code === uc; })[0]; }
+  function teamName(uc) { var t = teamOf(uc); return t ? t.team_name : '?'; }
+  function mask(code) { code = String(code || ''); return code.length <= 4 ? '••••' : code.slice(0, 2) + '••••' + code.slice(-2); }
+  function fmtDate(iso) { var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('sv-SE', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); }
+  function fmtDay(iso) { var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'long' }); }
+  function fmtTime(iso) { var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }); }
+  function sign(n) { return n > 0 ? '+' + n : String(n); }
+  function num(n, d) { if (n == null || !isFinite(n)) return '–'; var f = Math.round(n * 10) / 10; return d ? sign(f) : String(f); }
+  function cls(n) { return n > 0 ? 'pos' : n < 0 ? 'neg' : ''; }
+  function setMsg(html, kind) { $('#msg').innerHTML = html ? '<div class="' + (kind === 'err' ? 'err' : 'warn') + '">' + html + '</div>' : ''; }
+  function setStatus(t, frac) { $('#status').textContent = t || ''; $('#bar').style.width = frac == null ? '0' : Math.round(frac * 100) + '%'; }
+  function entriesList() { return S.teams.map(function (t) { return S.entries[t.user_code]; }).filter(function (e) { return e && e.status === 'ok'; }); }
+  function plBtn(p) { return '<button class="pl" data-pid="' + esc(p.player_id) + '">' + esc(p.name) + '</button>'; }
+  function surname(p) { if (p.family_name) return p.family_name; var n = String(p.name || '').trim().split(/\s+/); return n.length > 1 ? n.slice(1).join(' ') : n[0]; }
+  function captainOf(e) { return e && e.status === 'ok' ? e.players.filter(function (p) { return p.role === 'C'; })[0] : null; }
+  function vcOf(e) { return e && e.status === 'ok' ? e.players.filter(function (p) { return p.role === 'VC'; })[0] : null; }
+  function cardChip(e) {
+    if (!e || e.status !== 'ok') return '';
+    if (e.cardUnknown) return '<span class="chip">kort okänt</span>';
+    return e.card ? '<span class="chip card">' + esc(e.card.name) + '</span>' : '';
+  }
+
+  /* ---------- Spelarbricka och isrink (i stil med FPL:s planvy, utan klubbmärken) ---------- */
+  var JERSEY = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 5l-11 6 3 11 5-2v23h22V20l5 2 3-11-11-6c-1.5 3-4.5 4.5-8 4.5S17.5 8 16 5z" fill="FILL" stroke="STROKE" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 30h22" stroke="STRIPE" stroke-width="3"/></svg>';
+  function shirt(p) {
+    var gk = p.group === 'GK' || String(p.position).toUpperCase() === 'GK';
+    var svg = gk ? JERSEY.replace('FILL', '#ffd166').replace('STROKE', '#8a6a12').replace('STRIPE', '#181d26')
+                 : JERSEY.replace('FILL', '#163047').replace('STROKE', '#0b1726').replace('STRIPE', '#67a4ff');
+    return '<span class="shirt' + (gk ? ' gk' : '') + '">' + svg + '<span class="club">' + esc(p.club_id || '') + '</span></span>';
+  }
+  function pcard(p) {
+    var bench = p.group === 'BENCH';
+    var pts = Number(p.points);
+    var badgeL = p.role === 'C' ? '<span class="bdg l c" title="Kapten">C</span>' : p.role === 'VC' ? '<span class="bdg l vc" title="Assisterande kapten">A</span>' : '';
+    var badgeR = !bench && p.eff === 2 && p.role !== 'C' ? '<span class="bdg r x2" title="Dubbla poäng (coachkort)">×2</span>'
+               : !bench && p.eff === 0 ? '<span class="bdg r x0" title="Räknas inte (coachkort)">×0</span>' : '';
+    var klass = 'pc' + (!bench && (p.eff === 0 || pts === 0) ? ' zero' : '') + (pts < 0 ? ' neg' : '');
+    return '<button class="' + klass + '" data-pid="' + esc(p.player_id) + '" title="' + esc(p.name + ' · ' + (p.club_id || '') + ' · ' + (p.position || '')) + '">' +
+      badgeL + badgeR + shirt(p) + '<span class="nm">' + esc(surname(p)) + '</span><span class="pt">' + esc(isFinite(pts) ? pts : '–') + '</span></button>';
+  }
+  function rink(e) {
+    var by = function (g, slots) { return slots.map(function (s) { return e.players.filter(function (p) { return p.group === g && p.slot === s; })[0]; }).filter(Boolean); };
+    var extra = function (g, known) { return e.players.filter(function (p) { return p.group === g && known.indexOf(p.slot) < 0; }); };
+    var F = ['LW', 'CE', 'RW'], D = ['LD', 'RD'];
+    var line = function (g, label) {
+      var f = by(g, F), d = by(g, D), x = extra(g, F.concat(D));
+      return '<div class="zone"><span class="zl">' + label + '</span><div class="rrow">' + f.concat(x).map(pcard).join('') + '</div><div class="rrow">' + d.map(pcard).join('') + '</div></div>';
+    };
+    var gk = e.players.filter(function (p) { return p.group === 'GK'; });
+    var bench = e.players.filter(function (p) { return p.group === 'BENCH'; });
+    return '<div class="rink">' + line('L1', 'Femma 1') + '<div class="redline"></div>' + line('L2', 'Femma 2') + '<div class="blueline"></div>' +
+      '<div class="zone"><span class="zl">Målvakt</span><div class="rrow">' + gk.map(pcard).join('') + '</div><div class="crease"></div></div></div>' +
+      (bench.length ? '<div class="benchbox"><div class="zl">Bänk – räknas inte</div><div class="rrow">' + bench.map(pcard).join('') + '</div></div>' : '');
+  }
+  function listView(e) {
+    var rows = '';
+    ['L1', 'L2', 'GK', 'BENCH'].forEach(function (g) {
+      var ps = e.players.filter(function (p) { return p.group === g; });
+      if (!ps.length) return;
+      rows += '<tr class="grp"><td colspan="6">' + GROUP_LABEL[g] + '</td></tr>';
+      ps.forEach(function (p) {
+        rows += '<tr class="' + (g === 'BENCH' ? 'bench' : '') + '"><td>' + esc(g === 'GK' ? 'GK' : p.slot) + '</td><td>' + plBtn(p) +
+          (p.role === 'C' ? ' <span class="chip">C</span>' : p.role === 'VC' ? ' <span class="chip">A</span>' : '') + '</td><td>' + esc(p.club_id) +
+          '</td><td class="n">' + (p.age == null ? '' : p.age) + '</td><td class="n">' + (g === 'BENCH' ? '–' : '×' + p.eff) + '</td><td class="n"><b>' + esc(p.points) + '</b></td></tr>';
+      });
+    });
+    return '<div class="scroll"><table><thead><tr><th>Pos</th><th>Spelare</th><th>Klubb</th><th class="n">Ålder</th><th class="n">Mult</th><th class="n">Poäng</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+  function teamView(e) {
+    if (!e) return '<p class="muted">Hämtas…</p>';
+    if (e.status !== 'ok') return '<p class="muted">Laget kunde inte hämtas (' + esc(e.err) + ').</p>';
+    return S.view === 'list' ? listView(e) : rink(e);
+  }
+  function viewToggle() {
+    return '<div class="seg" role="group" aria-label="Visning"><button data-view="rink" aria-pressed="' + (S.view === 'rink') + '">Rink</button><button data-view="list" aria-pressed="' + (S.view === 'list') + '">Lista</button></div>';
+  }
+  function pointsFoot(e) {
+    if (!e || e.status !== 'ok') return '';
+    var off = e.team ? Number(e.team.points) : NaN;
+    var adj = isFinite(off) ? off - e.sum : 0;
+    return '<div class="small muted" style="margin-top:8px;text-align:center">Spelarpoäng ' + e.sum + (adj ? ' · <span class="neg">avdrag ' + adj + ' (extra byten)</span>' : '') +
+      (isFinite(off) ? ' · <b style="color:#fff">omgångspoäng ' + off + '</b>' : '') + '</div>';
+  }
+
+  /* ---------- Hämtning ---------- */
+  function readInputs() {
+    if (FIXED && !S.demo) $('#league').value = FIXED.id;
+    S.league = $('#league').value.trim();
+    S.uc = $('#uc').value.trim();
+    if (S.league && !/^\d{1,9}$/.test(S.league)) { setMsg('Liga-ID ska bara innehålla siffror (eller lämnas tomt).', 'err'); return false; }
+    if (!/^[A-Za-z0-9_-]{3,64}$/.test(S.uc)) { setMsg('Ange en giltig user_code (bokstäver och siffror).', 'err'); return false; }
+    return true;
+  }
+
+  function start(opts) {
+    opts = opts || {};
+    if (!readInputs()) return;
+    document.body.classList.remove('landing');
+    var token = ++S.token;
+    S.teams = []; S.entries = {}; S.prev = {}; S.games = {}; S.expanded = {};
+    setMsg('');
+    $('#ctx').classList.remove('hidden');
+    $('#tabs').classList.remove('hidden');
+    $('#setup').open = false;
+    S.leagueName = '';
+    renderLeagueName();
+    setStatus('Hämtar omgångar…', 0.02);
+    apiGet('/gameround', { user_code: S.uc }).then(function (r) {
+      if (token !== S.token) return;
+      if (r.network) { $('#setup').open = true; setMsg('Kunde inte nå fantasy.shl.se. Kontrollera internetanslutningen. Om webbläsaren blockerar anropet – prova Chrome, Edge eller Firefox, eller starta FantasySHL.exe.', 'err'); setStatus(''); return; }
+      if (r.status === 401) {
+        if (opts.fromLanding) { showLanding(true); landMsg($('#lIdMsg'), 'Lag-ID:t godtogs inte av fantasy.shl.se. Kontrollera det och försök igen.', true); return; }
+        $('#setup').open = true; setMsg('fantasy.shl.se svarade 401: user_code godtogs inte. Kontrollera koden.', 'err'); setStatus(''); return;
+      }
+      if (r.status !== 200) { $('#setup').open = true; setMsg('Oväntat svar från fantasy.shl.se (' + r.status + ').', 'err'); setStatus(''); return; }
+      S.current = resultOf(r);
+      if (!S.demo) setUc(S.uc); // koden fungerade: kom ihåg den på den här datorn
+      // Kodens ligor: fyller rullgardinsmenyn och ger ligans namn. Utan Liga-ID väljs senast visade eller första egna ligan.
+      return apiGet('/leagues', { per_page: 1000, user_code: S.uc }).then(function (rl) {
+        if (token !== S.token) return;
+        var all = listOf(resultOf(rl));
+        S.leagues = FIXED && !S.demo ? [FIXED] : FSL.customLeagues(all);
+        if (!S.league) {
+          var last = getLastLeague(), big = getBig();
+          var ok = S.leagues.filter(function (l) { return !big[l.id]; });
+          S.league = ok.some(function (l) { return l.id === last; }) ? last : (ok[0] ? ok[0].id : '');
+          opts.auto = true;
+          $('#league').value = S.league;
+        }
+        if (!S.league) { $('#setup').open = true; setMsg(S.leagues.length ? 'Alla kodens ligor är för stora för att hämta lag för lag. Ange ett Liga-ID.' : 'Koden är inte med i någon egen liga. Ange ett Liga-ID.', 'err'); setStatus(''); return 'stop'; }
+        var hit = all.filter(function (l) { return String(l.id) === S.league; })[0];
+        S.leagueName = hit && hit.name ? String(hit.name) : (FIXED && !S.demo ? FIXED.name : '');
+        setLeagueName(S.league, S.leagueName);
+        $('#shareBtn').classList.remove('hidden');
+        renderLeagueName(); renderLeagueSelect();
+      }).then(function (stop) {
+        if (stop === 'stop' || token !== S.token) return;
+        return apiGet('/gamerounds', { per_page: 1000, user_code: S.uc });
+      }).then(function (r2) {
+        if (!r2 || token !== S.token) return;
+        S.rounds = listOf(resultOf(r2)).sort(function (a, b) { return a.game_round_number - b.game_round_number; });
+        if (!S.rounds.length && S.current) S.rounds = [S.current];
+        var locked = S.rounds.filter(isLocked);
+        var sel = $('#round');
+        sel.innerHTML = locked.map(function (r) { return '<option value="' + r.game_round_number + '">Omgång ' + r.game_round_number + '</option>'; }).join('');
+        renderDeadline();
+        if (!locked.length) { setMsg('Ingen omgång är låst ännu, så inga lag kan visas.', 'warn'); setStatus(''); return; }
+        var want = opts.round && roundObj(opts.round) && isLocked(roundObj(opts.round)) ? Number(opts.round) : locked[locked.length - 1].game_round_number;
+        sel.value = String(want);
+        return loadRound(want, token, opts);
+      });
+    });
+  }
+
+  function loadTeams(round, token) {
+    var all = [], page = 1;
+    function next() {
+      return apiGet('/leagues/' + S.league + '/teams', { page: page, game_round_id: round.id != null ? round.id : round.game_round_number, user_code: S.uc }).then(function (r) {
+        if (token !== S.token) return null;
+        if (r.status !== 200) throw new Error(r.status === 401 ? 'Ligan gick inte att läsa med den här user_code (401). Är koden medlem i liga ' + S.league + '?' : 'Ligan svarade ' + r.status + '.');
+        var res = resultOf(r) || {};
+        if (Number(res.total) > FSL.MAX_LEAGUE_TEAMS) {
+          var err = new Error('Ligan har ' + res.total + ' lag – för stor för att hämta lag för lag (högst ' + FSL.MAX_LEAGUE_TEAMS + '). Välj en kompisliga i listan.');
+          err.tooBig = Number(res.total); throw err;
+        }
+        all = all.concat(listOf(res));
+        var last = Number(res.last_page) || 1;
+        if (page < last && page < 30) { page++; return next(); }
+        return all;
+      });
+    }
+    return next();
+  }
+
+  function loadEntry(uc, round, token, into) {
+    var persist = Number(round.points_processed) === 1;
+    var n = round.game_round_number;
+    var pu = into === S.entries ? apiGet('/game-round/power-ups', { game_round_number: n, user_code: uc }, { persist: persist }) : Promise.resolve(null);
+    return pu.then(function (rp) {
+      if (token !== S.token) return;
+      return apiGet('/fantasy-points/line-up', { game_round_number: n, user_code: uc }, { persist: persist }).then(function (rl) {
+        if (token !== S.token) return;
+        var team = teamOf(uc) || {};
+        if (rl.status !== 200) { into[uc] = { uc: uc, name: team.team_name, status: 'error', err: rl.status === 422 ? 'ej tillgänglig' : 'fel ' + rl.status, players: [] }; return; }
+        var puList = rp && rp.status === 200 ? resultOf(rp) : null;
+        var card = FSL.activeCard(puList);
+        var prep = FSL.prepareTeam(FSL.flattenLineup((resultOf(rl) || {}).team_lineup), card && card.code, round.start_date);
+        into[uc] = { uc: uc, name: team.team_name, team: team, status: 'ok', card: card, cardUnknown: into === S.entries && !puList,
+          used: FSL.usedCards(puList), players: prep.players, sum: prep.sum };
+      });
+    });
+  }
+
+  function loadRound(n, token, opts) {
+    opts = opts || {};
+    S.roundNo = Number(n);
+    $('#gwLabel').textContent = 'Omgång ' + S.roundNo;
+    var round = roundObj(n);
+    var keepPrev = !!opts.keepPrev;
+    if (!keepPrev) { S.entries = {}; S.prev = {}; }
+    updateLiveBtn();
+    setStatus('Hämtar ligatabellen…', 0.05);
+    return loadTeams(round, token).then(function (teams) {
+      if (!teams || token !== S.token) return;
+      S.teams = teams.sort(function (a, b) { return (a.rank || 999) - (b.rank || 999); });
+      setLastLeague(S.league);
+      var lagWanted = opts.lag || getLag(S.league);
+      var byName = lagWanted ? FSL.pickMyTeam(S.teams, { lag: lagWanted }) : null;
+      if (opts.ownCode && !S.demo) setOwn(S.uc);
+      var byCode = (opts.ownCode || getOwn() === S.uc) && teamOf(S.uc) ? S.uc : (opts.team && teamOf(opts.team) ? opts.team : (S.myUc && teamOf(S.myUc) ? S.myUc : null));
+      S.myUc = byName || byCode || null; // inget gissat lag: saknas valet visas sökningen
+      S.confirmed = !!S.myUc;
+      if (S.confirmed) setLag(S.league, teamName(S.myUc));
+      if (!S.rivalUc || !teamOf(S.rivalUc) || S.rivalUc === S.myUc) {
+        var r0 = S.teams.filter(function (t) { return t.user_code !== S.myUc; })[0]; S.rivalUc = r0 ? r0.user_code : null;
+      }
+      renderWho(); updateUrl(); renderAll();
+      var order = S.teams.map(function (t) { return t.user_code; });
+      order.sort(function (a, b) { return (b === S.myUc) - (a === S.myUc); });
+      var i = 0, total = order.length;
+      function step() {
+        if (token !== S.token) return;
+        if (i >= total) return afterMain();
+        var uc = order[i++];
+        setStatus('Hämtar lag ' + i + ' av ' + total + '… ca ' + Math.ceil((total - i + 1) * 2.2 * (S.demo || PROXY ? (S.demo ? 0.05 : 1) : 1)) + ' s kvar', 0.05 + 0.75 * i / total);
+        return loadEntry(uc, round, token, S.entries).then(function () { scheduleRender(); return step(); });
+      }
+      function afterMain() {
+        var prevRound = roundObj(Number(n) - 1);
+        if (keepPrev) { setStatus('Live-uppdaterat ' + new Date().toLocaleTimeString('sv-SE') + '. ' + total + ' lag hämtade.', 1); scheduleRender(); return; }
+        if (!prevRound) { setStatus('Klart. ' + total + ' lag hämtade.', 1); scheduleRender(); return; }
+        var j = 0;
+        function stepPrev() {
+          if (token !== S.token) return;
+          if (j >= total) { setStatus('Klart. ' + total + ' lag hämtade, byten jämförda mot omgång ' + prevRound.game_round_number + '.', 1); scheduleRender(); return; }
+          var uc = order[j++];
+          setStatus('Hämtar förra omgångens trupp ' + j + ' av ' + total + ' (för Byten)…', 0.8 + 0.2 * j / total);
+          return loadEntry(uc, prevRound, token, S.prev).then(function () { scheduleRender(); return stepPrev(); });
+        }
+        return stepPrev();
+      }
+      return step();
+    }).catch(function (e) {
+      if (token !== S.token) return;
+      if (e.tooBig) {
+        setBig(S.league, e.tooBig); renderLeagueSelect();
+        var next = (S.leagues || []).filter(function (l) { return !S.big[l.id]; })[0];
+        if (opts.auto && next) { $('#league').value = ''; S.myUc = null; S.rivalUc = null; start({ ownCode: opts.ownCode, fromLanding: opts.fromLanding }); return; } // väljer nästa liga som inte är för stor
+      }
+      setMsg(esc(e.message), 'err'); setStatus('');
+    });
+  }
+
+  /* ---------- Rendering ---------- */
+  var renderPending = false;
+  function scheduleRender() { if (renderPending) return; renderPending = true; setTimeout(function () { renderPending = false; renderAll(); }, 150); }
+  function renderAll() { renderMine(); renderLeague(); renderRival(); renderImpact(); renderTransfers(); if (S.tab === 'upcoming') renderUpcoming(); }
+
+  function renderLeagueName() {
+    $('#leagueLabel').textContent = S.leagueName || (FIXED ? FIXED.name : (S.league ? 'Liga ' + S.league : 'Kompisligan'));
+    document.title = (S.leagueName ? S.leagueName + ' · ' : '') + 'Fantasy SHL Gameweek';
+  }
+  function chooseMine(uc) {
+    if (!teamOf(uc)) return;
+    S.myUc = uc; S.confirmed = true; S.query = '';
+    setLag(S.league, teamName(uc));
+    if (S.rivalUc === S.myUc) { var r0 = S.teams.filter(function (t) { return t.user_code !== S.myUc; })[0]; S.rivalUc = r0 && r0.user_code; }
+    renderWho(); updateUrl(); renderAll();
+  }
+
+  // Ny sökning: det aktiva laget släpps och sökfältet visas igen.
+  function clearMine() {
+    S.myUc = null; S.confirmed = false; S.query = '';
+    try { localStorage.removeItem('fsl-lag:' + S.league); } catch (e) { /* ignoreras */ }
+    if (getOwn() === S.uc) setOwn('');
+    updateUrl(); renderWho(); renderAll(); selectTab('mine');
+    if (S.demo) { setTimeout(function () { var i = $('#teamSearch'); if (i) i.focus(); }, 30); return; }
+    S.access = { uc: S.uc, league: S.league, name: S.leagueName };
+    $('#lName').value = ''; $('#lResults').innerHTML = ''; landMsg($('#lIdMsg'), '');
+    showLanding(true);
+  }
+
+  function renderWho() {
+    var inLeague = !!teamOf(S.uc);
+    $('#who').innerHTML = 'Hämtar med user_code <b style="color:#fff">' + esc(mask(S.uc)) + '</b>, som tillhör <b style="color:#fff">' + (inLeague ? esc(teamName(S.uc)) : 'ett lag utanför ligan') + '</b>. ' +
+      '';
+    var bar = $('#activeBar'); bar.classList.toggle('hidden', !S.teams.length || (!S.myUc && S.tab === 'mine'));
+    $('#deadline').classList.toggle('noteam', !S.myUc && !!S.teams.length);
+    bar.innerHTML = S.myUc
+      ? '<div class="who"><small>Aktivt lag</small><b>' + esc(teamName(S.myUc)) + '</b></div><button data-newsearch>Byt lag – ny sökning</button>'
+      : '<div class="who"><small>Aktivt lag</small><b>Inget valt än</b></div><button class="primary" data-gosearch>Sök ditt lag</button>';
+  }
+
+  var deadlineTimer = null;
+  function renderDeadline() {
+    clearInterval(deadlineTimer);
+    var box = $('#deadline');
+    var c = S.current;
+    if (!c || isLocked(c) || !c.lock_time) { box.classList.add('hidden'); return; }
+    function tick() {
+      var ms = Date.parse(c.lock_time) - Date.now();
+      if (ms <= 0) { box.innerHTML = '<b>Deadline för omgång ' + esc(c.game_round_number) + ' har passerat.</b> Klicka <b>Uppdatera</b> om en stund så visas rivalernas nya lag.'; return; }
+      var d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4);
+      box.innerHTML = '⏳ <b>Deadline omgång ' + esc(c.game_round_number) + ':</b> ' + esc(fmtDate(c.lock_time)) + ' (om ' + (d ? d + ' d ' : '') + h + ' h ' + m + ' min). ' +
+        'Rivalernas nya lag och kort är dolda till dess. Nedan visas senaste låsta omgången.';
+    }
+    tick(); box.classList.remove('hidden');
+    deadlineTimer = setInterval(tick, 30000);
+  }
+
+  function cardsLine(e) {
+    if (!e || e.status !== 'ok') return '';
+    var cap = captainOf(e), vc = vcOf(e);
+    return '<div class="chips">' + (e.cardUnknown ? '<span class="chip">kort okänt</span>' : e.card ? '<span class="chip card">★ ' + esc(e.card.name) + '</span>' : '<span class="chip">Inget coachkort</span>') +
+      (cap ? '<span class="chip">C ' + esc(surname(cap)) + '</span>' : '') + (vc ? '<span class="chip">A ' + esc(surname(vc)) + '</span>' : '') +
+      (e.used || []).map(function (u) { return '<span class="chip used" title="Förbrukat">' + esc(u) + '</span>'; }).join('') + '</div>';
+  }
+
+  function leagueStats() {
+    var pts = S.teams.map(function (t) { return Number(t.points); }).filter(isFinite);
+    if (!pts.length) return { avg: null, max: null };
+    return { avg: Math.round(pts.reduce(function (a, b) { return a + b; }, 0) / pts.length), max: Math.max.apply(null, pts) };
+  }
+
+  function renderMine() {
+    var el = $('#tab-mine');
+    var e = S.entries[S.myUc];
+    var t = teamOf(S.myUc);
+    if (!S.teams.length) { el.innerHTML = ''; return; }
+    if (!t) { if (!el.querySelector('#teamSearch')) el.innerHTML = searchCard(); renderSearchResults(); return; }
+    var st = leagueStats();
+    var delta = t.previous_rank ? t.previous_rank - t.rank : 0;
+    el.innerHTML = '<div class="gwhead"><div class="team">' + esc(t.team_name) + '</div><div class="sub">Omgång ' + S.roundNo + ' · plats ' + esc(t.rank) + ' av ' + S.teams.length +
+      (delta ? ' <span class="' + (delta > 0 ? 'pos' : 'neg') + '">' + (delta > 0 ? '▲' : '▼') + Math.abs(delta) + '</span>' : '') + ' · totalt ' + esc(t.total_points) + '</div>' +
+      '<div class="gwstats"><div><div class="v">' + num(st.avg) + '</div><div class="l">Ligasnitt</div></div>' +
+      '<div class="main"><div class="v">' + esc(t.points) + '</div><div class="l">Dina poäng</div></div>' +
+      '<div><div class="v">' + num(st.max) + '</div><div class="l">Högst i ligan</div></div></div>' + cardsLine(e) + '</div>' +
+      '<div style="display:flex;justify-content:flex-end;margin:0 0 8px">' + viewToggle() + '</div>' + teamView(e) + pointsFoot(e) +
+      '<p class="small muted" style="text-align:center">Poängen är fantasy.shl.se:s egna och inkluderar redan kapten och coachkort. C = kapten, A = assisterande. Tryck på en spelare för att se vilka i ligan som äger honom.</p>';
+  }
+
+  function searchCard() {
+    return '<div class="card search" style="border-color:var(--acc)"><h2>Hitta ditt lag</h2>' +
+      '<p class="small muted" style="margin:0 0 6px">Skriv ditt för- och efternamn, som i Fantasy SHL. Lagnamnet går också bra.</p>' +
+      '<input id="teamSearch" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="t.ex. Anna Svensson" aria-label="Sök ditt namn">' +
+      '<div id="searchResults" aria-live="polite"></div></div>';
+  }
+  // Markerar sökorden i råtexten (ignorerar å/ä/ö och versaler) och HTML-kodar varje bit för sig.
+  function highlight(text, words) {
+    var chars = Array.from(String(text == null ? '' : text));
+    var pieces = chars.map(function (ch) { var f = ch.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); return f.length === ch.length ? f : ch; });
+    var starts = [], pos = 0;
+    pieces.forEach(function (p) { starts.push(pos); pos += p.length; });
+    var folded = pieces.join(''), on = chars.map(function () { return false; });
+    words.forEach(function (w) {
+      w = String(w).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+      if (w.length < 2) return;
+      for (var i = folded.indexOf(w); i >= 0; i = folded.indexOf(w, i + 1)) {
+        starts.forEach(function (s, k) { if (s >= i && s < i + w.length) on[k] = true; });
+      }
+    });
+    var out = '', cur = '', curOn = false;
+    chars.forEach(function (ch, k) {
+      if (on[k] !== curOn) { out += curOn ? '<mark>' + esc(cur) + '</mark>' : esc(cur); cur = ''; curOn = on[k]; }
+      cur += ch;
+    });
+    return out + (curOn ? '<mark>' + esc(cur) + '</mark>' : esc(cur));
+  }
+  function renderSearchResults() {
+    var box = $('#searchResults'); if (!box) return;
+    var inp = $('#teamSearch');
+    if (inp && inp.value !== (S.query || '') && document.activeElement !== inp) inp.value = S.query || '';
+    var q = String(S.query || '').trim();
+    var liga = esc(S.leagueName || 'ligan');
+    if (q.length < 2) { box.innerHTML = '<p class="small muted">' + S.teams.length + ' lag i ' + liga + '. Börja skriva så visas träffarna.</p>'; return; }
+    var hits = FSL.searchTeams(S.teams, q);
+    if (!hits.length) { box.innerHTML = '<p class="small">Inga träffar på <b>' + esc(q) + '</b> i ' + liga + '. Kontrollera stavningen, prova bara efternamnet, eller byt liga i listan ovan.</p>'; return; }
+    var words = q.split(/\s+/);
+    box.innerHTML = hits.slice(0, 8).map(function (t) {
+      var person = [t.first_name, t.last_name].filter(Boolean).join(' ');
+      var ini = (String(t.first_name || t.team_name || '?').charAt(0) + String(t.last_name || '').charAt(0)).toUpperCase();
+      return '<button class="hit" data-choose="' + esc(t.user_code) + '"><span class="av">' + esc(ini) + '</span><span class="tx"><b>' + highlight(person || t.team_name, words) + '</b>' +
+        '<span>' + (person ? highlight(t.team_name, words) + ' · ' : '') + 'plats ' + esc(t.rank) + ' · ' + esc(t.total_points) + ' p</span></span><span class="go">Välj ›</span></button>';
+    }).join('') + (hits.length > 8 ? '<p class="small muted">' + (hits.length - 8) + ' till – skriv mer av namnet.</p>' : '') +
+      '<p class="small muted">Tryck på ditt lag för att göra det till ditt aktiva lag. Valet sparas i den här webbläsaren.</p>';
+  }
+  function needTeam(what) {
+    return '<div class="card" style="text-align:center"><h2>Välj ditt lag först</h2><p class="small muted">' + what + ' räknas utifrån ditt aktiva lag.</p><button class="primary" data-gosearch>Sök ditt lag</button></div>';
+  }
+
+  function renderLeague() {
+    var el = $('#tab-league');
+    if (!S.teams.length) { el.innerHTML = ''; return; }
+    var done = entriesList().length;
+    var byGw = S.sort === 'gw';
+    var sorted = S.teams.slice().sort(byGw
+      ? function (a, b) { return (Number(b.points) - Number(a.points)) || (Number(b.total_points) - Number(a.total_points)); }
+      : function (a, b) { return (a.rank || 999) - (b.rank || 999); });
+    var pos = {};
+    sorted.forEach(function (t, i) { var prev = sorted[i - 1]; pos[t.user_code] = prev && Number(prev.points) === Number(t.points) ? pos[prev.user_code] : i + 1; });
+    var rows = sorted.map(function (t) {
+      var e = S.entries[t.user_code];
+      var cap = captainOf(e);
+      var delta = t.previous_rank ? t.previous_rank - t.rank : 0;
+      var mv = byGw ? '<span class="mv same">omg</span>' : delta > 0 ? '<span class="mv up">▲' + delta + '</span>' : delta < 0 ? '<span class="mv down">▼' + (-delta) + '</span>' : '<span class="mv same">•</span>';
+      var meta = [];
+      if (e && e.status === 'ok') {
+        if (e.card) meta.push('★ ' + esc(e.card.name));
+        if (cap) meta.push('C ' + esc(surname(cap)));
+        var vc = vcOf(e); if (vc) meta.push('A ' + esc(surname(vc)));
+        if (e.players.length !== 15) meta.push(e.players.length + '/15 spelare');
+      } else meta.push(e ? 'ej tillgängligt' : 'hämtas…');
+      var out = '<div class="lrow' + (t.user_code === S.myUc ? ' me' : '') + '"><div class="lt"><div class="rk"><b>' + esc(byGw ? pos[t.user_code] : t.rank) + '</b>' + mv + '</div>' +
+        '<div class="tn"><button class="name" data-expand="' + esc(t.user_code) + '">' + esc(t.team_name) + '</button><div class="meta">' + meta.join(' · ') + '</div></div>' +
+        '<div class="gwp">' + esc(t.points) + '</div><div class="tot">' + esc(t.total_points) + '</div></div>';
+      if (S.expanded[t.user_code]) {
+        out += '<div class="lexp">' + cardsLine(e) + '<div style="height:8px"></div>' + teamView(e) + pointsFoot(e) +
+          (t.user_code === S.myUc || !S.myUc ? '' : '<div style="text-align:center;margin-top:8px"><button data-rival="' + esc(t.user_code) + '">Jämför med mitt lag</button></div>') + '</div>';
+      }
+      return out + '</div>';
+    }).join('');
+    var sb = function (key, label, align) {
+      var on = S.sort === key;
+      return '<button class="sortbtn' + (on ? ' on' : '') + '" data-sort="' + key + '" style="text-align:' + align + '" aria-pressed="' + on + '" title="Sortera">' + label + (on ? ' ▼' : '') + '</button>';
+    };
+    el.innerHTML = '<div class="card" style="padding:12px 0 4px"><div style="display:flex;justify-content:space-between;align-items:center;padding:0 14px 10px;gap:8px"><h2 style="margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+      esc(S.leagueName || 'Liga ' + S.league) + '</h2><span class="small muted" style="white-space:nowrap">' + done + '/' + S.teams.length + ' lag</span></div>' +
+      '<div class="lt hd"><div style="text-align:center">#</div><div>Lag</div>' + sb('gw', 'Omg', 'right') + sb('rank', 'Totalt', 'right') + '</div>' + rows + '</div>' +
+      '<p class="small muted" style="text-align:center">Tryck på <b>Omg</b> för veckans topplista eller <b>Totalt</b> för tabellen. Tryck på ett lag för att se truppen.</p>';
+  }
+
+  function miniRows(list, empty) {
+    if (!list.length) return '<p class="muted small">' + empty + '</p>';
+    var max = Math.max.apply(null, list.map(function (r) { return Math.abs(r.net || 0); }).concat([1]));
+    return list.map(function (r) {
+      var w = Math.round(Math.abs(r.net || 0) / max * 100);
+      return '<div class="minirow"><div class="who">' + plBtn(r) + '<div class="meta">' + esc(r.club_id) + ' · du ×' + r.myMult + ' · ' + (r.rivalMult != null ? 'rival ×' + r.rivalMult : 'snitt ×' + num(r.avgOthers)) +
+        (r.base != null ? ' · ' + num(r.base) + ' p' : '') + '</div><div class="bar"><div style="width:' + w + '%;background:' + ((r.net || 0) >= 0 ? 'var(--good)' : 'var(--bad)') + '"></div></div></div>' +
+        '<div class="val ' + cls(r.net) + '">' + num(r.net, 1) + '</div></div>';
+    }).join('');
+  }
+
+  function renderRival() {
+    var el = $('#tab-rival');
+    if (!S.teams.length) { el.innerHTML = ''; return; }
+    if (!S.myUc) { el.innerHTML = needTeam('Rivaljämförelsen'); return; }
+    var opts = S.teams.filter(function (t) { return t.user_code !== S.myUc; }).map(function (t) { return '<option value="' + esc(t.user_code) + '"' + (t.user_code === S.rivalUc ? ' selected' : '') + '>' + esc(t.rank + '. ' + t.team_name) + '</option>'; }).join('');
+    var me = S.entries[S.myUc], rv = S.entries[S.rivalUc];
+    var body = '<p class="muted">Lagen hämtas…</p>';
+    if (me && rv && me.status === 'ok' && rv.status === 'ok') {
+      var tm = me.team || {}, tr = rv.team || {};
+      var diff = FSL.rivalCompare(me, rv);
+      var onlyMe = diff.filter(function (r) { return r.rivalMult === 0 && r.myMult > 0; });
+      var onlyRv = diff.filter(function (r) { return r.myMult === 0 && r.rivalMult > 0; });
+      var both = diff.filter(function (r) { return r.myMult > 0 && r.rivalMult > 0; });
+      var net = diff.reduce(function (a, r) { return a + (r.net || 0); }, 0);
+      body = '<div class="gwhead"><div class="h2h"><div class="me"><div class="v">' + esc(tm.points) + '</div><div class="t">' + esc(me.name) + '</div></div><div class="vs">mot</div>' +
+        '<div><div class="v">' + esc(tr.points) + '</div><div class="t">' + esc(rv.name) + '</div></div></div>' +
+        '<div class="grid2" style="margin-top:8px"><div>' + cardsLine(me) + '</div><div>' + cardsLine(rv) + '</div></div>' +
+        '<div class="sub" style="margin-top:8px">Skillnaden i spelare är värd <b class="' + cls(net) + '">' + num(net, 1) + '</b> p för dig den här omgången</div></div>' +
+        '<div class="grid2"><div class="card"><h2>Bara du har</h2>' + miniRows(onlyMe, 'Inga.') + '</div><div class="card"><h2>Bara rivalen har</h2>' + miniRows(onlyRv, 'Inga.') + '</div></div>' +
+        '<div class="card"><h2>Båda har – olika multiplikator</h2><p class="small muted">Kapten, coachkort eller bänk skiljer.</p>' + miniRows(both, 'Inga.') + '</div>';
+    }
+    el.innerHTML = '<div class="card"><label>Välj rival<select id="rivalSel">' + opts + '</select></label></div>' + body;
+  }
+
+  function renderImpact() {
+    var el = $('#tab-impact');
+    if (!FEATURES.impact) { el.innerHTML = ''; return; } // avstängd tills vidare
+    var list = entriesList();
+    if (S.teams.length && !S.myUc) { el.innerHTML = needTeam('"Skadar mig mest"'); return; }
+    if (!S.entries[S.myUc] || S.entries[S.myUc].status !== 'ok') { el.innerHTML = S.teams.length ? '<p class="muted">Ditt lag hämtas…</p>' : ''; return; }
+    var imp = FSL.impact(S.myUc, list);
+    var hurt = imp.filter(function (r) { return r.importance < 0; }).sort(function (a, b) {
+      var x = a.net == null ? a.importance * 3 : a.net, y = b.net == null ? b.importance * 3 : b.net; return x - y; }).slice(0, 20);
+    var mine = imp.filter(function (r) { return r.owned; }).sort(function (a, b) { return (b.net || 0) - (a.net || 0); });
+    var partial = list.length < S.teams.length ? '<div class="warn small">Beräknat på ' + list.length + ' av ' + S.teams.length + ' lag – fler hämtas.</div>' : '';
+    var own = function (r) { return Object.assign({}, r, { rivalMult: null }); };
+    el.innerHTML = partial + '<div class="card"><h2>Skadar mig mest</h2><p class="small muted">Spelare som ligan har (ofta som kapten eller med kort) men du saknar. Siffran = poäng du tappat mot ett snittlag den här omgången (multiplikatorskillnad × spelarens grundpoäng).</p>' +
+      miniRows(hurt.map(own), 'Inga – snyggt!') + '</div>' +
+      '<div class="card"><h2>Mina spelares betydelse</h2><p class="small muted">Positivt = spelaren har gett dig ett försprång mot ligasnittet.</p>' + miniRows(mine.map(own), '–') + '</div>';
+  }
+
+  function renderTransfers() {
+    var el = $('#tab-transfers');
+    if (!S.teams.length) { el.innerHTML = ''; return; }
+    var prevNo = S.roundNo - 1;
+    if (!roundObj(prevNo)) { el.innerHTML = '<div class="card muted">Ingen tidigare omgång att jämföra med.</div>'; return; }
+    var approx = false;
+    var cards = S.teams.map(function (t) {
+      var cur = S.entries[t.user_code], prev = S.prev[t.user_code];
+      var head = '<div style="display:flex;justify-content:space-between;gap:8px"><b>' + esc(t.team_name) + '</b>';
+      if (!cur || !prev) return '<div class="minirow" style="display:block">' + head + '<span class="small muted">hämtas…</span></div></div>';
+      if (cur.status !== 'ok') return '<div class="minirow" style="display:block">' + head + '<span class="small muted">ej tillgängligt</span></div></div>';
+      var d = FSL.transfersDiff(prev.status === 'ok' ? prev.players : [], cur.players);
+      if (d.partial) approx = true;
+      if (d.newCoach) return '<div class="minirow" style="display:block">' + head + '<span class="small muted">ny coach</span></div></div>';
+      var free = cur.card && cur.card.code === 'FREE_EXCHANGE';
+      var extra = free ? 0 : Math.max(0, d.in.length - 1);
+      var badge = d.in.length ? '<span class="chip' + (free ? ' card' : '') + '">' + d.in.length + ' byte' + (d.in.length > 1 ? 'n' : '') + (free ? ' · Fria byten' : extra ? ' · <span class="neg">−' + (10 * extra) + ' p</span>' : '') + '</span>' : '<span class="small muted">inga byten</span>';
+      return '<div class="minirow" style="display:block' + (t.user_code === S.myUc ? ';background:#67a4ff12' : '') + '">' + head + badge + '</div>' +
+        (d.in.length || d.out.length ? '<div class="trf"><div>' + d.in.map(function (p) { return '<div class="in">▲ ' + plBtn(p) + '</div>'; }).join('') + '</div><div>' +
+          d.out.map(function (p) { return '<div class="out">▼ ' + esc(p.name) + '</div>'; }).join('') + '</div></div>' : '') + '</div>';
+    }).join('');
+    el.innerHTML = '<div class="card"><h2>Byten inför omgång ' + S.roundNo + '</h2><p class="small muted">Hela truppen (15 inkl. bänk) i omgång ' + prevNo + ' mot ' + S.roundNo + '. Flytt mellan bänk och kedja räknas inte.</p>' +
+      (approx ? '<div class="warn small">Ungefärligt: minst en trupp saknade spelare i svaret.</div>' : '') + cards + '</div>';
+  }
+
+  function renderUpcoming() {
+    var el = $('#tab-upcoming');
+    if (!S.rounds.length) { el.innerHTML = ''; return; }
+    var up = S.rounds.filter(function (r) { return !isLocked(r); }).slice(0, 2);
+    var token = S.token;
+    var need = [];
+    if (!S.clubs) need.push(apiGet('/clubs', { user_code: S.uc }).then(function (r) { S.clubs = r.status === 200 ? listOf(resultOf(r)) : []; }));
+    up.forEach(function (r) {
+      if (!S.games[r.game_round_number]) need.push(apiGet('/games', { per_page: 500, game_week: r.game_round_number, sort_by: 'start_time', user_code: S.uc }).then(function (x) {
+        S.games[r.game_round_number] = (x.status === 200 ? listOf(resultOf(x)) : []).sort(function (a, b) { return Date.parse(a.start_time) - Date.parse(b.start_time); });
+      }));
+    });
+    if (need.length) { el.innerHTML = '<p class="muted">Hämtar matchschema…</p>'; Promise.all(need).then(function () { if (token === S.token && S.tab === 'upcoming') renderUpcoming(); }); return; }
+    var clubName = {}; (S.clubs || []).forEach(function (c) { clubName[c.code] = c.shortname || c.name || c.code; });
+    var me = S.entries[S.myUc];
+    var mineByClub = {};
+    if (me && me.status === 'ok') me.players.forEach(function (p) { (mineByClub[p.club_id] = mineByClub[p.club_id] || []).push(p); });
+    var html = '';
+    up.forEach(function (r) {
+      var g = S.games[r.game_round_number] || [];
+      if (!g.length) return; // vecka utan data döljs
+      var perClub = {};
+      g.forEach(function (x) { [x.home_team_id, x.away_team_id].forEach(function (c) { perClub[c] = (perClub[c] || 0) + 1; }); });
+      var myCount = 0; Object.keys(mineByClub).forEach(function (c) { myCount += (perClub[c] || 0) * mineByClub[c].length; });
+      var day = '', body = '';
+      g.forEach(function (x) {
+        var d = fmtDay(x.start_time);
+        if (d !== day) { day = d; body += '<div class="sect">' + esc(d) + '</div>'; }
+        var mp = (mineByClub[x.home_team_id] || []).concat(mineByClub[x.away_team_id] || []);
+        body += '<div class="fx"><div class="h">' + esc(clubName[x.home_team_id] || x.home_team_id) + '</div><div class="tm">' + esc(fmtTime(x.start_time)) + '</div><div class="a">' + esc(clubName[x.away_team_id] || x.away_team_id) + '</div>' +
+          (mp.length ? '<div class="mine">Dina: ' + mp.map(function (p) { return esc(surname(p)); }).join(', ') + '</div>' : '') + '</div>';
+      });
+      html += '<div class="card"><h2>Omgång ' + esc(r.game_round_number) + ' <span class="small muted">' + esc(r.start_date || '') + ' – ' + esc(r.end_date || '') + '</span></h2>' +
+        (me && me.status === 'ok' ? '<div class="chips" style="justify-content:flex-start;margin:0 0 4px"><span class="chip">' + myCount + ' matcher för dina spelare</span></div>' : '') + body + '</div>';
+    });
+    el.innerHTML = html || '<div class="card muted">Inga kommande matcher publicerade ännu.</div>';
+  }
+
+  function showOwners(pid) {
+    var list = entriesList();
+    var own = FSL.ownership(list)[pid] || [];
+    var any = null;
+    list.some(function (e) { return e.players.some(function (p) { if (String(p.player_id) === String(pid)) { any = p; return true; } return false; }); });
+    if (!any) return;
+    $('#ownersBody').innerHTML = '<div style="display:flex;gap:12px;align-items:center">' + shirt(any) + '<div><h2 style="margin:0">' + esc(any.name) + '</h2><div class="small muted">' + esc(any.club_id) + ' · ' + esc(any.position) + (any.age != null ? ' · ' + any.age + ' år' : '') +
+      '</div></div></div><p>Ägs av <b>' + own.length + '</b> av ' + list.length + ' lag i ligan.</p>' +
+      own.map(function (o) { return '<div class="minirow"' + (o.uc === S.myUc ? ' style="background:#67a4ff12"' : '') + '><div class="who"><b>' + esc(o.name) + '</b><div class="meta">' + GROUP_LABEL[o.group] + (o.role === 'C' ? ' · kapten' : o.role === 'VC' ? ' · ass. kapten' : '') + '</div></div><div class="val">' + (o.group === 'BENCH' ? '–' : '×' + o.eff) + '</div></div>'; }).join('');
+    var d = $('#owners'); if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+  }
+
+  /* ---------- Live: fantasy.shl.se processar händelser under match (verifierat), minst 60 s mellan uppdateringar ---------- */
+  var LIVE_GAP_MS = 60000, lastLive = 0, liveTimer = null;
+  function liveAllowed() {
+    var r = roundObj(S.roundNo);
+    var locked = S.rounds.filter(isLocked);
+    return !!r && locked.length && Number(locked[locked.length - 1].game_round_number) === S.roundNo && Number(r.points_processed) !== 1;
+  }
+  function updateLiveBtn() {
+    var b = $('#liveBtn');
+    b.classList.toggle('hidden', !liveAllowed());
+    var wait = Math.ceil((lastLive + LIVE_GAP_MS - Date.now()) / 1000);
+    b.disabled = wait > 0;
+    b.textContent = wait > 0 ? '● Live (om ' + wait + ' s)' : '● Uppdatera live';
+    clearTimeout(liveTimer);
+    if (wait > 0) liveTimer = setTimeout(updateLiveBtn, 1000);
+  }
+  function liveRefresh() {
+    if (!liveAllowed() || Date.now() - lastLive < LIVE_GAP_MS) return;
+    lastLive = Date.now();
+    var n = S.roundNo;
+    Object.keys(mem).forEach(function (k) {
+      if (k.indexOf('/leagues/') === 0 || (k.indexOf('/fantasy-points/line-up?') === 0 && k.indexOf('game_round_number=' + n + '&') >= 0)) delete mem[k];
+    });
+    loadRound(n, ++S.token, { team: S.myUc, keepPrev: true });
+  }
+
+  /* ---------- Delningslänk ---------- */
+  // Ligalänk: bara liga + kod (varje kompis väljer sitt lag via namnet). Egen länk: även lag=Lagnamn.
+  function shareParams(own) {
+    var p = { league: S.league || $('#league').value.trim(), uc: S.uc || $('#uc').value.trim() };
+    if (own && S.confirmed && S.myUc) p.lag = teamName(S.myUc);
+    return p;
+  }
+  // Adressen som länkar och QR-koder pekar på: sidans egen webbadress, annars den inställda.
+  function isPublicPage() { return /^https?:$/.test(location.protocol) && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname); }
+  function getPublicUrl() {
+    var v = '';
+    try { v = localStorage.getItem('fsl-public') || ''; } catch (e) { /* ignoreras */ }
+    return v || (typeof window.FSL_PUBLIC_URL === 'string' ? window.FSL_PUBLIC_URL : '');
+  }
+  function baseHref() {
+    if (isPublicPage()) return location.href.split('?')[0].split('#')[0];
+    return getPublicUrl() || location.href.split('?')[0].split('#')[0];
+  }
+  function linkWorksForOthers() { return isPublicPage() || /^https:\/\//.test(getPublicUrl()); }
+  var shareMode = 'league';
+  function renderShare() {
+    var own = shareMode === 'mine' && S.confirmed && S.myUc;
+    var href = baseHref() + FSL.buildShareQuery(shareParams(!!own));
+    $('#shareTitle').textContent = own ? teamName(S.myUc) : (S.leagueName || 'ligan');
+    $('#shareHint').textContent = own ? 'Öppnar ditt lag direkt. Bra för din egen mobil.' : 'Kompisarna skannar med mobilkameran, söker sitt namn och är igång.';
+    $('#shareQr').innerHTML = FSL.qrSvg(href);
+    $('#shareUrl').value = href;
+    var warn = $('#shareWarn');
+    warn.classList.toggle('hidden', linkWorksForOthers());
+    warn.innerHTML = linkWorksForOthers() ? '' : '<b>Obs!</b> Länken pekar på din egen dator och fungerar inte på andras mobiler. Lägg upp appen på webben och fyll i adressen under <b>Inställningar → Webbadress</b> (se LÄSMIG).';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sharemode]'), function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-sharemode') === shareMode));
+      if (b.getAttribute('data-sharemode') === 'mine') b.disabled = !(S.confirmed && S.myUc);
+    });
+  }
+  function openShare() {
+    if (!S.league || !S.uc) return;
+    if (shareMode === 'mine' && !(S.confirmed && S.myUc)) shareMode = 'league';
+    renderShare();
+    var d = $('#shareDlg'); if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+  }
+  function updateUrl() {
+    if (S.demo) return;
+    try { history.replaceState(null, '', location.pathname + FSL.buildShareQuery(shareParams(true))); } catch (e) { /* file:// i vissa webbläsare */ }
+  }
+  function copyLink() {
+    var href = baseHref() + FSL.buildShareQuery(shareParams(false));
+    var own = S.confirmed ? baseHref() + FSL.buildShareQuery(shareParams(true)) : '';
+    var out = $('#copyOut');
+    var show = function (ok) {
+      out.classList.remove('hidden');
+      out.innerHTML = (ok ? '<b>Ligalänken är kopierad.</b> ' : 'Markera och kopiera ligalänken: ') + '<code>' + esc(href) + '</code><br>Kompisen öppnar sin egen <b>Fantasy-SHL.html</b>, klistrar in länken i rutan <i>Klistra in delningslänk</i>, klickar <b>Öppna länk</b> och väljer sitt lag via namnet.' +
+        (own ? '<br><br>Din egen länk (öppnar <b>' + esc(teamName(S.myUc)) + '</b> direkt): <code>' + esc(own) + '</code>' : '');
+    };
+    $('#setup').open = true;
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(href).then(function () { show(true); }, function () { show(false); });
+    else show(false);
+  }
+  function applyParams(p, auto) {
+    if (p.league) $('#league').value = p.league;
+    if (p.uc) $('#uc').value = p.uc;
+    if (p.team) S.myUc = p.team;
+    if (auto && p.uc) start({ team: p.team, lag: p.lag, round: p.round });
+  }
+
+  /* ---------- Händelser ---------- */
+  function selectTab(name) {
+    S.tab = name;
+    Array.prototype.forEach.call(document.querySelectorAll('#tabs button'), function (x) { x.setAttribute('aria-selected', String(x.getAttribute('data-tab') === name)); });
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (x) { x.classList.toggle('hidden', x.id !== 'tab-' + name); });
+    if (name === 'upcoming') renderUpcoming();
+    if (S.teams.length) renderWho();
+    window.scrollTo(0, 0);
+  }
+  $('#cfg').addEventListener('submit', function (ev) { ev.preventDefault(); exitDemo(); start({ team: S.myUc }); });
+  $('#reload').addEventListener('click', function () { mem = {}; if (S.league && S.uc) start({ team: S.myUc, round: S.roundNo }); });
+  $('#pasteBtn').addEventListener('click', function () {
+    var p = FSL.parseAnyInput($('#paste').value);
+    if (!p.uc) { setMsg('Länken saknar uc (en user_code).', 'err'); return; }
+    if (!p.league) $('#league').value = '';
+    exitDemo(); applyParams(p, true);
+  });
+  $('#copyBtn').addEventListener('click', copyLink);
+  $('#shareBtn').addEventListener('click', openShare);
+  $('#shareCopy').addEventListener('click', function () {
+    var i = $('#shareUrl'), b = this;
+    var done = function () { b.textContent = 'Kopierad ✓'; setTimeout(function () { b.textContent = 'Kopiera länk'; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(i.value).then(done, function () { i.select(); document.execCommand('copy'); done(); });
+    else { i.select(); document.execCommand('copy'); done(); }
+  });
+  document.addEventListener('click', function (ev) { var sm = ev.target.closest('[data-sharemode]'); if (sm && !sm.disabled) { shareMode = sm.getAttribute('data-sharemode'); renderShare(); } });
+  (function () {
+    var pu = $('#publicUrl'); pu.value = getPublicUrl();
+    pu.addEventListener('change', function () {
+      var v = pu.value.trim();
+      if (v && !/^https?:\/\//.test(v)) v = 'https://' + v;
+      if (v && !/\/$/.test(v) && !/\.html?$/.test(v)) v += '/';
+      pu.value = v;
+      try { if (v) localStorage.setItem('fsl-public', v); else localStorage.removeItem('fsl-public'); } catch (e) { /* ignoreras */ }
+    });
+  })();
+  $('#forgetBtn').addEventListener('click', forgetMe);
+  $('#lFindId').addEventListener('click', function () { $('#lFindBox').classList.toggle('hidden'); });
+  $('#lGo').addEventListener('click', landingGo);
+  $('#lSearch').addEventListener('click', function () { landingSearch(false); });
+  $('#lDemo').addEventListener('click', enterDemo);
+  $('#lId').addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); landingGo(); } });
+  $('#lId').addEventListener('paste', function () { setTimeout(function () { var v = $('#lId').value; if (/"user_code"|user_code=|[?&]uc=/.test(v)) landingGo(); }, 0); });
+  $('#lName').addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Enter') return;
+    ev.preventDefault();
+    var first = document.querySelector('#lResults [data-landpick]');
+    if (first && S.landTeams && Object.keys(S.landTeams).length) first.click(); else landingSearch(false);
+  });
+  $('#lName').addEventListener('input', function () { clearTimeout(landTimer); landTimer = setTimeout(function () { landingSearch(true); }, 350); });
+  $('#liveBtn').addEventListener('click', liveRefresh);
+  $('#demoBtn').addEventListener('click', enterDemo);
+  $('#round').addEventListener('change', function () { var t = ++S.token; S.games = {}; loadRound(Number(this.value), t, { team: S.myUc }); });
+  $('#leagueSel').addEventListener('change', function () {
+    $('#league').value = this.value;
+    S.myUc = null; S.rivalUc = null; S.sort = 'rank';
+    start({});
+  });
+  $('#tabs').addEventListener('click', function (ev) { var b = ev.target.closest('button[data-tab]'); if (b) selectTab(b.getAttribute('data-tab')); });
+  document.addEventListener('click', function (ev) {
+    var v = ev.target.closest('[data-view]'); if (v) { S.view = v.getAttribute('data-view'); try { localStorage.setItem('fsl-view', S.view); } catch (e) { /* ignoreras */ } renderAll(); return; }
+    var so = ev.target.closest('[data-sort]'); if (so) { S.sort = so.getAttribute('data-sort'); renderLeague(); return; }
+    var lp = ev.target.closest('[data-landpick]'); if (lp) { landingPick(lp.getAttribute('data-landpick')); return; }
+    var ch = ev.target.closest('[data-choose]'); if (ch) { chooseMine(ch.getAttribute('data-choose')); selectTab('mine'); return; }
+    if (ev.target.closest('[data-newsearch]')) { clearMine(); return; }
+    if (ev.target.closest('[data-gosearch]')) { selectTab('mine'); setTimeout(function () { var i = $('#teamSearch'); if (i) i.focus(); }, 30); return; }
+    var p = ev.target.closest('[data-pid]'); if (p) { showOwners(p.getAttribute('data-pid')); return; }
+    var x = ev.target.closest('[data-expand]'); if (x) { var k = x.getAttribute('data-expand'); S.expanded[k] = !S.expanded[k]; renderLeague(); return; }
+    var r = ev.target.closest('[data-rival]'); if (r) { S.rivalUc = r.getAttribute('data-rival'); selectTab('rival'); renderRival(); }
+  });
+  document.addEventListener('input', function (ev) { if (ev.target.id === 'teamSearch') { S.query = ev.target.value; renderSearchResults(); } });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.target.id === 'teamSearch' && ev.key === 'Enter') { var first = document.querySelector('#searchResults [data-choose]'); if (first) { ev.preventDefault(); first.click(); } }
+  });
+  document.addEventListener('change', function (ev) { if (ev.target.id === 'rivalSel') { S.rivalUc = ev.target.value; renderRival(); } });
+
+  function enterDemo() {
+    S.demo = FSL.makeDemo(Date.now()); mem = {};
+    $('#demoBanner').classList.remove('hidden');
+    $('#league').value = '1'; $('#uc').value = 'DEMOA1'; S.myUc = null; S.rivalUc = null;
+    showLanding(false);
+    start({ ownCode: true });
+  }
+  function exitDemo() { if (S.demo) { S.demo = null; mem = {}; $('#demoBanner').classList.add('hidden'); } }
+
+  function runSelftest() {
+    var res = FSL.selftest(), bad = res.filter(function (r) { return !r.ok; });
+    var el = $('#selftest'); el.classList.remove('hidden');
+    el.innerHTML = '<h2>Självtest: ' + (res.length - bad.length) + '/' + res.length + ' OK</h2><ul class="small">' +
+      res.map(function (r) { return '<li class="' + (r.ok ? 'pos' : 'neg') + '">' + (r.ok ? '✓ ' : '✗ ') + esc(r.name) + (r.detail ? ' – ' + esc(r.detail) : '') + '</li>'; }).join('') + '</ul>';
+    document.title = 'Självtest ' + (bad.length ? 'FEL' : 'OK');
+  }
+
+  var initial = FSL.parseShare(location.search);
+  var flags = location.search;
+  if (/[?&]selftest\b/.test(flags)) runSelftest();
+  if (/[?&]demo\b/.test(flags)) enterDemo();
+  else {
+    if (FIXED) { $('#league').value = FIXED.id; $('#leagueIdLabel').classList.add('hidden'); $('#leagueLabel').textContent = FIXED.name; initial.league = FIXED.id; }
+    renderSaved();
+    // Länk i adressen, annars sparad kod/liga eller kompisfilens förinställning.
+    var p0 = initial.uc ? initial : null;
+    if (!p0) { var a0 = access(); if (a0) p0 = { uc: a0.uc, league: a0.league }; }
+    if (p0 && (p0.lag || p0.team || (p0.league && getLag(p0.league)))) applyParams(p0, true); // laget är känt: rakt in
+    else {
+      if (p0) S.access = { uc: p0.uc, league: p0.league || '', name: getLeagueName(p0.league) || (PRESET && PRESET.league === p0.league ? PRESET.name : '') };
+      showLanding(true); // annars startsidan: lag-ID eller namn
+    }
+  }
+})();
+</script>
+</body>
+</html>
